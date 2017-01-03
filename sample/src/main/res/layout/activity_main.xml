@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity"
+    android:background="@color/white"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout"
+        android:clipToPadding="false">
+
+        <TextView
+            android:id="@+id/messageDialogTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Use a theme for the dialog"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"
+            android:clipToPadding="false">
+
+            <Button
+                android:id="@+id/buttonDialogThemeLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/dialog_light_theme_button_background"
+                android:paddingRight="16dp"
+                android:paddingLeft="16dp"
+                android:text="Light theme"
+                android:textColor="@color/dialog_light_theme_text_color"
+                android:stateListAnimator="@null"/>
+
+            <Button
+                android:id="@+id/buttonDialogThemeDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/dialog_dark_theme_button_background"
+                android:paddingRight="16dp"
+                android:paddingLeft="16dp"
+                android:text="Dark theme"
+                android:textColor="@color/colorAccent"
+                android:stateListAnimator="@null"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:text="Hello World!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Button
+        android:id="@+id/buttonAuthenticate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="Authenticate" />
+
+    <Button
+        android:id="@+id/buttonEncrypt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Encrypt text" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttonEncrypt"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:ems="10"
+        android:hint="Insert your message to be encrypted"
+        android:inputType="textPersonName" />
+
+</RelativeLayout>

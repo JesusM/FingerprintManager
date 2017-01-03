@@ -1,0 +1,26 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name ="DialogThemeLight" parent="Theme.AppCompat.Light.Dialog.MinWidth">
+        <item name="colorAccent">@color/dialog_light_theme_accent</item>
+        <item name="android:colorAccent">@color/dialog_light_theme_accent</item>
+        <item name="android:background">@color/dialog_light_theme_background</item>
+        <item name="android:textColorPrimary">@color/dialog_light_theme_text_color_primary</item>
+        <item name="android:textColorSecondary">@color/dialog_light_theme_text_color_secondary</item>
+    </style>
+
+    <style name ="DialogThemeDark" parent="Theme.AppCompat.Dialog.MinWidth">
+        <item name="colorAccent">@color/dialog_dark_theme_accent</item>
+        <item name="android:colorAccent">@color/dialog_dark_theme_accent</item>
+        <item name="android:background">@color/dialog_dark_theme_background</item>
+        <item name="android:textColorPrimary">@color/dialog_dark_theme_text_color_primary</item>
+        <item name="android:textColorSecondary">@color/dialog_dark_theme_text_color_secondary</item>
+    </style>
+
+</resources>
