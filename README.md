@@ -130,17 +130,17 @@ In the [screenshots](#screenshots) section you can see some samples of the custo
 
 # Screenshots:
 
-##### Authentication using fingerprint (left) and manual password (right) using a light theme.
-<img src="resources/images/sample_light_theme.png" width="288" height="512" hspace="50">
+##### Authentication using fingerprint and manual password using a light theme.
+<img src="resources/images/sample_light_theme.png" width="200" height="355">
 
-<img src="resources/images/sample_light_theme_manual.png" width="288" height="512">
+<img src="resources/images/sample_light_theme_manual.png" width="200" height="355">
 
 <br><br>
 
 ##### Same screens but this time using a dark theme.
-<img src="resources/images/sample_dark_theme.png" width="288" height="512" hspace="50">
+<img src="resources/images/sample_dark_theme.png" width="200" height="355">
 
-<img src="resources/images/sample_dark_theme_manual.png" width="288" height="512">
+<img src="resources/images/sample_dark_theme_manual.png" width="200" height="355">
 
 
 ### Resources
