@@ -1,3 +1,5 @@
+[![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=58e4023c2fb30e0001bf5dda&branch=master&build=latest)](https://dashboard.buddybuild.com/apps/58e4023c2fb30e0001bf5dda/build/latest?branch=master)
+
 JFingerprintManager
 -------------------
 A small library to handle Android fingerprint APIs.
