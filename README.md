@@ -12,6 +12,21 @@ A small library to handle Android fingerprint APIs.
  This library provides a sample to show how it can be used.
 
 ### Basic use:
+ You import via gradle from <https://jitpack.io> addint it to your repositories
+ ```gradle
+  allprojects {
+    repositories {
+      ...
+      maven { url 'https://jitpack.io' }
+    }
+  }
+ ```
+ and then adding the library as dependency:
+ ```gradle
+ dependencies {
+   compile 'com.github.JesusM:FingerprintManager:v1.0'
+ }
+ ```
  Create the fingerprint manager.
  ```java
  fingerPrintManager = new JFingerprintManager(context, key);
