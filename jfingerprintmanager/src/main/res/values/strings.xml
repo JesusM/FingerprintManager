@@ -19,4 +19,5 @@
     <string name="fingerprint_not_initialised_error_msg">Fingerprint not initialised</string>
     <string name="fingerprint_not_available_error_msg">Fingerprint not available</string>
     <string name="fingerprint_not_recognized_error_msg">Fingerprint not recognized</string>
+    <string name="warning_password_empty">Password can\'t be empty</string>
 </resources>
