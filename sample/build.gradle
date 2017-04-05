@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion parent.ext.compileSdkVersion
@@ -19,9 +20,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 dependencies {
     compile 'com.android.support:appcompat-v7:' + parent.ext.supportLibsVersion
-    compile project(':jfingerprintmanager')
+    compile project(':kfingerprintmanager')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-4"
+}
+
+repositories {
+    mavenCentral()
 }

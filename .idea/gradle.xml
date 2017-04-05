@@ -8,7 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/jfingerprintmanager" />
+            <option value="$PROJECT_DIR$/kfingerprintmanager" />
             <option value="$PROJECT_DIR$/sample" />
           </set>
         </option>
