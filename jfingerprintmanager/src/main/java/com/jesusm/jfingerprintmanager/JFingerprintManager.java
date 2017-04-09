@@ -14,7 +14,6 @@ import com.jesusm.jfingerprintmanager.base.ui.SystemImpl;
 import com.jesusm.jfingerprintmanager.encryption.Base64Encoder;
 import com.jesusm.jfingerprintmanager.encryption.Encoder;
 import com.jesusm.jfingerprintmanager.encryption.EncryptionManager;
-import com.jesusm.jfingerprintmanager.utils.TextUtils;
 
 public class JFingerprintManager {
     private EncryptionManager encryptionManager;
@@ -22,15 +21,14 @@ public class JFingerprintManager {
 
     @VisibleForTesting
     public JFingerprintManager(System system, FingerprintAssetsManager fingerprintAssetsManager,
-                               Encoder encoder, TextUtils textUtils) {
-        this.encryptionManager = new EncryptionManager(fingerprintAssetsManager, system, encoder,
-                textUtils);
+                               Encoder encoder) {
+        this.encryptionManager = new EncryptionManager(fingerprintAssetsManager, system, encoder);
         this.authenticationManager = new AuthenticationManager(fingerprintAssetsManager, system);
     }
 
     public JFingerprintManager(Context context, @NonNull String keyStoreAlias) {
         this(new SystemImpl(), new FingerprintAssetsManager(context, keyStoreAlias),
-                new Base64Encoder(), new TextUtils());
+                new Base64Encoder());
     }
 
     /**
@@ -53,7 +51,18 @@ public class JFingerprintManager {
                         @NonNull final EncryptionCallback callback,
                         @NonNull final FragmentManager fragmentManager) {
         encryptionManager.encrypt(messageToEncrypt, callback, fragmentManager);
+    }
 
+    /**
+     * This method encrypts the text given by messageToEncrypt parameter, using Android Fingerprint APIs.
+     *  @param messageToDecrypt Text to be decrypted.
+     * @param callback         Callback that receives events produced in encryption process.
+     * @param fragmentManager  FragmentManager to allow displaying UI component (DialogFragment).
+     */
+    public void decrypt(@NonNull final String messageToDecrypt,
+                        @NonNull final DecryptionCallback callback,
+                        @NonNull final FragmentManager fragmentManager) {
+        encryptionManager.decrypt(messageToDecrypt, callback, fragmentManager);
     }
 
     /**
@@ -73,6 +82,12 @@ public class JFingerprintManager {
         void onAuthenticationFailedWithHelp(String help);
 
         void onFingerprintNotAvailable();
+    }
+
+    public interface DecryptionCallback extends FingerprintBaseCallback{
+        void onDecryptionSuccess(String messageDecrypted);
+
+        void onDecryptionFailed();
     }
 
     public interface EncryptionCallback extends FingerprintBaseCallback{

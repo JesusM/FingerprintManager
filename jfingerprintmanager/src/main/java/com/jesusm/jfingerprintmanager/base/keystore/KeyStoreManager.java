@@ -7,6 +7,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -18,41 +19,35 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Enumeration;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 public class KeyStoreManager {
 
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
-    private KeyStore keyStore;
     private KeyGenerator keyGenerator;
     private KeyguardManager keyguardManager;
     private Cipher defaultCipher;
-    private Cipher cipherNotInvalidated;
-    private String keyStoreAlias;
 
     public KeyStoreManager(Context context) {
         keyguardManager = context.getSystemService(KeyguardManager.class);
     }
 
-    public void createCipher() throws NoSuchAlgorithmException, NoSuchPaddingException {
+    public Cipher createCipher() throws NoSuchAlgorithmException, NoSuchPaddingException {
         String transformation = KeyProperties.KEY_ALGORITHM_AES + "/"
                 + KeyProperties.BLOCK_MODE_CBC + "/"
                 + KeyProperties.ENCRYPTION_PADDING_PKCS7;
-        defaultCipher = Cipher.getInstance(transformation);
-        cipherNotInvalidated = Cipher.getInstance(transformation);
+        return Cipher.getInstance(transformation);
     }
 
     public void createKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
         keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
-    }
-
-    public void createKeyStore() throws KeyStoreException {
-        keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
     }
 
     public boolean isFingerprintEnrolled() {
@@ -61,6 +56,102 @@ public class KeyStoreManager {
 
     private void logError(String message) {
         Log.e(getClass().getSimpleName(), message);
+    }
+
+    public Cipher initDefaultCipher(String key) throws NewFingerprintEnrolledException, InitialisationException, NoSuchPaddingException, NoSuchAlgorithmException {
+        defaultCipher = createCipher();
+        initCipher(defaultCipher, key);
+        return defaultCipher;
+    }
+
+    /**
+     * Initialize the {@link Cipher} instance with the created key in the
+     * {@link #createKey(String, boolean)} method.
+     *
+     * @param alias the key alias to init the cipher
+     */
+    private void initCipher(Cipher cipher, String alias) throws NewFingerprintEnrolledException,
+            InitialisationException {
+        try {
+            SecretKey key = getKey(alias);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+        } catch (KeyPermanentlyInvalidatedException e) {
+            // Lock screen has been disabled or reset after the key was generated, or fingerprint
+            // got enrolled after the key was generated (while app is opened).
+            //
+            throw new NewFingerprintEnrolledException("New fingerprint enrolled", e);
+        } catch (InvalidKeyException e) {
+            throw new InitialisationException("Error initialising cipher for decryption", e);
+        }
+    }
+
+    public Cipher initCipherForDecryption(String alias, byte[] iv) throws InitialisationException,
+            NewFingerprintEnrolledException {
+        try {
+            Cipher cipher = createCipher();
+            SecretKey key = getKey(alias);
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+            return cipher;
+        } catch (KeyPermanentlyInvalidatedException e) {
+            // Lock screen has been disabled or reset after the key was generated, or fingerprint
+            // got enrolled after the key was generated (while app is opened).
+            //
+            throw new NewFingerprintEnrolledException("New fingerprint enrolled", e);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new InitialisationException("Error initialising cipher for decryption", e);
+        }
+    }
+
+    public class NewFingerprintEnrolledException extends Throwable {
+        NewFingerprintEnrolledException(String message, KeyPermanentlyInvalidatedException cause) {
+            super(message, cause);
+        }
+    }
+
+    public static class InitialisationException extends Throwable {
+        public InitialisationException(String message, Exception cause) {
+            super(message, cause);
+        }
+    }
+
+    public boolean isCipherAvailable() {
+        return defaultCipher != null;
+    }
+
+    @Nullable
+    private SecretKey getKey(String alias) {
+        try {
+            if (existsKey(alias)) {
+                try {
+                    KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+                    keyStore.load(null);
+                    return (SecretKey) keyStore.getKey(alias, null);
+                } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException |
+                        CertificateException | IOException e) {
+                    return null;
+                }
+            } else {
+                createKey(alias, true);
+                return getKey(alias);
+            }
+        } catch (CertificateException | IOException | KeyStoreException | NoSuchAlgorithmException | InitialisationException e) {
+            logError(e.getMessage());
+            return null;
+        }
+    }
+
+    private boolean existsKey(String keyName) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+        KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+        keyStore.load(null);
+        Enumeration<String> aliases = keyStore.aliases();
+
+        while (aliases.hasMoreElements()) {
+            if (keyName.equals(aliases.nextElement())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -77,13 +168,11 @@ public class KeyStoreManager {
      *                                         the app works on Android N developer preview.
      */
     public void createKey(@NonNull String keyStoreAlias, boolean invalidatedByBiometricEnrollment)
-            throws RuntimeException {
+            throws InitialisationException {
         // The enrolling flow for fingerprint. This is where you ask the user to set up fingerprint
         // for your flow. Use of keys is necessary if you need to know if the set of
         // enrolled fingerprints has changed.
         try {
-            this.keyStoreAlias = keyStoreAlias;
-            keyStore.load(null);
             // Set the alias of the entry in Android KeyStore where the key will appear
             // and the constrains (purposes) in the constructor of the Builder
 
@@ -106,54 +195,9 @@ public class KeyStoreManager {
             }
             keyGenerator.init(builder.build());
             keyGenerator.generateKey();
-        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException
-                | CertificateException | IOException e) {
+        } catch (InvalidAlgorithmParameterException e) {
             logError(e.getMessage());
-            throw new RuntimeException(e);
+            throw new InitialisationException(e.getMessage(), e);
         }
     }
-
-    public void initDefaultCipher() throws NewFingerprintEnrolledException, RuntimeException {
-        try {
-            initCipher(defaultCipher, this.keyStoreAlias);
-        } catch (KeyStoreException |
-                UnrecoverableKeyException | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException("Failed to init Cipher", e);
-        }
-    }
-
-    /**
-     * Initialize the {@link Cipher} instance with the created key in the
-     * {@link #createKey(String, boolean)} method.
-     *
-     * @param keyName the key name to init the cipher
-     */
-    private void initCipher(Cipher cipher, String keyName) throws RuntimeException,
-            NewFingerprintEnrolledException, InvalidKeyException, UnrecoverableKeyException,
-            NoSuchAlgorithmException, KeyStoreException {
-        try {
-            SecretKey key = (SecretKey) keyStore.getKey(keyName, null);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-        } catch (KeyPermanentlyInvalidatedException e) {
-            // Lock screen has been disabled or reset after the key was generated, or fingerprint
-            // got enrolled after the key was generated (while app is opened).
-            //
-            throw new NewFingerprintEnrolledException("New fingerprint enrolled", e);
-        }
-    }
-
-    public class NewFingerprintEnrolledException extends Throwable {
-        NewFingerprintEnrolledException(String message, KeyPermanentlyInvalidatedException cause) {
-            super(message, cause);
-        }
-    }
-
-    public Cipher getDefaultCipher() {
-        return defaultCipher;
-    }
-
-    public boolean isCipherAvailable() {
-        return defaultCipher != null;
-    }
-
 }

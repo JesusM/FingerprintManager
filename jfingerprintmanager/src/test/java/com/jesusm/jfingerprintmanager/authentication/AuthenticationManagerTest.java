@@ -9,13 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 
 import javax.crypto.NoSuchPaddingException;
 
@@ -52,82 +46,11 @@ public class AuthenticationManagerTest extends BaseTest{
     }
 
     @Test
-    public void notAvailableIfKeyStoreCreationError() throws KeyStoreException {
+    public void notAvailableIfCipherCreationError() throws NoSuchPaddingException, NoSuchAlgorithmException,
+            KeyStoreManager.InitialisationException, KeyStoreManager.NewFingerprintEnrolledException {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
-        doThrow(new KeyStoreException()).when(mockKeyStoreManager).createKeyStore();
-
-        JFingerprintManager.AuthenticationCallback authenticationCallback = Mockito.mock(JFingerprintManager.AuthenticationCallback.class);
-        jFingerprintManager.startAuthentication(authenticationCallback, mockFragmentManager);
-
-        verify(authenticationCallback).onFingerprintNotAvailable();
-        verify(authenticationCallback, never()).onAuthenticationSuccess();
-    }
-
-    @Test
-    public void notAvailableIfKeyGeneratorCreationError() throws NoSuchProviderException, NoSuchAlgorithmException {
-        JFingerprintManager jFingerprintManager = createFingerPrintManager();
-        when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
-        doThrow(new NoSuchAlgorithmException()).when(mockKeyStoreManager).createKeyGenerator();
-
-        JFingerprintManager.AuthenticationCallback authenticationCallback = Mockito.mock(JFingerprintManager.AuthenticationCallback.class);
-        jFingerprintManager.startAuthentication(authenticationCallback, mockFragmentManager);
-
-        verify(authenticationCallback).onFingerprintNotAvailable();
-        verify(authenticationCallback, never()).onAuthenticationSuccess();
-    }
-
-    @Test
-    public void notAvailableIfCipherCreationError() throws NoSuchPaddingException, NoSuchAlgorithmException {
-        JFingerprintManager jFingerprintManager = createFingerPrintManager();
-        when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
-        doThrow(new NoSuchAlgorithmException()).when(mockKeyStoreManager).createCipher();
-
-        JFingerprintManager.AuthenticationCallback authenticationCallback = Mockito.mock(JFingerprintManager.AuthenticationCallback.class);
-        jFingerprintManager.startAuthentication(authenticationCallback, mockFragmentManager);
-
-        verify(authenticationCallback).onFingerprintNotAvailable();
-        verify(authenticationCallback, never()).onAuthenticationSuccess();
-    }
-
-    @Test
-    public void notAvailableIfCipherInitialisationError() throws UnrecoverableKeyException,
-            CertificateException, KeyStoreException, InvalidKeyException, IOException,
-            NoSuchAlgorithmException, KeyStoreManager.NewFingerprintEnrolledException {
-        JFingerprintManager jFingerprintManager = createFingerPrintManager();
-        when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
-        when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        doThrow(new RuntimeException()).when(mockKeyStoreManager).initDefaultCipher();
-
-        JFingerprintManager.AuthenticationCallback authenticationCallback = Mockito.mock(JFingerprintManager.AuthenticationCallback.class);
-        jFingerprintManager.startAuthentication(authenticationCallback, mockFragmentManager);
-
-        verify(authenticationCallback).onFingerprintNotAvailable();
-        verify(authenticationCallback, never()).onAuthenticationSuccess();
-    }
-
-    @Test
-    public void notAvailableIfKeyCreationError() throws RuntimeException {
-        JFingerprintManager jFingerprintManager = createFingerPrintManager();
-        when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
-        when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        doThrow(new RuntimeException()).when(mockKeyStoreManager).createKey(KEY_STORE_ALIAS, true);
-
-        JFingerprintManager.AuthenticationCallback authenticationCallback = Mockito.mock(JFingerprintManager.AuthenticationCallback.class);
-        jFingerprintManager.startAuthentication(authenticationCallback, mockFragmentManager);
-
-        verify(authenticationCallback).onFingerprintNotAvailable();
-        verify(authenticationCallback, never()).onAuthenticationSuccess();
-    }
-
-    @Test
-    public void notAvailableIfKeyInitialisationError() throws UnrecoverableKeyException,
-            NoSuchAlgorithmException, KeyStoreException, InvalidKeyException,
-            KeyStoreManager.NewFingerprintEnrolledException {
-        JFingerprintManager jFingerprintManager = createFingerPrintManager();
-        when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
-        when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        doThrow(new RuntimeException()).when(mockKeyStoreManager).initDefaultCipher();
+        doThrow(new NoSuchAlgorithmException()).when(mockKeyStoreManager).initDefaultCipher(KEY_STORE_ALIAS);
 
         JFingerprintManager.AuthenticationCallback authenticationCallback = Mockito.mock(JFingerprintManager.AuthenticationCallback.class);
         jFingerprintManager.startAuthentication(authenticationCallback, mockFragmentManager);

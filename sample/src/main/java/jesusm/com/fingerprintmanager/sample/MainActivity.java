@@ -17,9 +17,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText messageToBeEncryptedEditText;
     private Button authenticateButton;
     private Button encryptTextButton;
+    private Button decryptTextButton;
     private JFingerprintManager fingerPrintManager;
 
-    private String messageToBeEncrypted;
+    private String messageToDecrypt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         messageToBeEncryptedEditText = (EditText) findViewById(R.id.editText);
         authenticateButton = (Button) findViewById(R.id.buttonAuthenticate);
         encryptTextButton = (Button) findViewById(R.id.buttonEncrypt);
+        decryptTextButton = (Button) findViewById(R.id.buttonDecrypt);
 
         selectView(findViewById(R.id.buttonDialogThemeLight));
     }
@@ -106,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         encryptTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                messageToBeEncrypted = messageToBeEncryptedEditText.getText().toString();
-                fingerPrintManager.encrypt(messageToBeEncrypted, new JFingerprintManager.EncryptionCallback() {
+                messageToDecrypt = messageToBeEncryptedEditText.getText().toString();
+                fingerPrintManager.encrypt(messageToDecrypt, new JFingerprintManager.EncryptionCallback() {
                     @Override
                     public void onFingerprintNotRecognized() {
                         messageTextView.setText("Fingerprint not recognized");
@@ -127,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onEncryptionSuccess(String messageEncrypted) {
                         String message = getString(R.string.encrypt_message_success, messageEncrypted);
                         messageTextView.setText(message);
+                        messageToBeEncryptedEditText.setText(messageEncrypted);
+                        encryptTextButton.setVisibility(View.GONE);
+                        decryptTextButton.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -137,16 +142,51 @@ public class MainActivity extends AppCompatActivity {
                 }, getSupportFragmentManager());
             }
         });
+
+        decryptTextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                messageToDecrypt = messageToBeEncryptedEditText.getText().toString();
+                fingerPrintManager.decrypt(messageToDecrypt, new JFingerprintManager.DecryptionCallback() {
+                    @Override
+                    public void onDecryptionSuccess(String messageDecrypted) {
+                        String message = getString(R.string.decrypt_message_success, messageDecrypted);
+                        messageTextView.setText(message);
+                        messageToBeEncryptedEditText.setText("");
+                        decryptTextButton.setVisibility(View.GONE);
+                        encryptTextButton.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onDecryptionFailed() {
+                        messageTextView.setText("Decryption failed");
+                    }
+
+                    @Override
+                    public void onFingerprintNotRecognized() {
+                        messageTextView.setText("Fingerprint not recognized");
+                    }
+
+                    @Override
+                    public void onAuthenticationFailedWithHelp(String help) {
+                        messageTextView.setText(help);
+                    }
+
+                    @Override
+                    public void onFingerprintNotAvailable() {
+                        messageTextView.setText("Fingerprint not available");
+                    }
+                }, getSupportFragmentManager());
+            }
+        });
     }
 
-    private void selectView(View view)
-    {
+    private void selectView(View view) {
         view.setSelected(true);
         view.setElevation(32);
     }
 
-    private void deselectView(View view)
-    {
+    private void deselectView(View view) {
         view.setSelected(false);
         view.setElevation(0);
     }

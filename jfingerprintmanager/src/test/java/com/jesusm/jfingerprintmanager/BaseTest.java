@@ -10,11 +10,8 @@ import com.jesusm.jfingerprintmanager.base.keystore.KeyStoreManager;
 import com.jesusm.jfingerprintmanager.base.ui.FingerprintBaseDialogFragment;
 import com.jesusm.jfingerprintmanager.base.ui.System;
 import com.jesusm.jfingerprintmanager.encryption.Encoder;
-import com.jesusm.jfingerprintmanager.utils.TextUtils;
 
 import org.mockito.Mock;
-
-import javax.crypto.Cipher;
 
 public class BaseTest {
     protected static final String KEY_STORE_ALIAS = "fake_key";
@@ -32,14 +29,9 @@ public class BaseTest {
 
     @SuppressLint("VisibleForTests")
     protected JFingerprintManager createFingerPrintManager() {
-        return createFingerPrintManagerWithTextUtils(new TextUtils());
-    }
-
-    @SuppressLint("VisibleForTests")
-    protected JFingerprintManager createFingerPrintManagerWithTextUtils(TextUtils textUtils) {
         FingerprintAssetsManager fingerprintAssetsManager = new FingerprintAssetsManager(mockContext,
                 mockFingerprintHardware, mockKeyStoreManager, KEY_STORE_ALIAS);
-        return new JFingerprintManager(mockSystem, fingerprintAssetsManager, new FakeEncoder(), textUtils);
+        return new JFingerprintManager(mockSystem, fingerprintAssetsManager, new FakeEncoder());
     }
 
     protected class FakeSystem implements System {
@@ -54,8 +46,13 @@ public class BaseTest {
     public class FakeEncoder implements Encoder {
 
         @Override
-        public String encrypt(String message, Cipher cipher) {
+        public String encode(byte[] message) {
             return "";
+        }
+
+        @Override
+        public byte[] decode(String messageToDecode) {
+            return new byte[0];
         }
     }
 }

@@ -14,7 +14,7 @@ A small library to handle Android fingerprint APIs.
  This library provides a sample to show how it can be used.
 
 ### Basic use:
- You import via gradle from <https://jitpack.io> addint it to your repositories
+ You import via gradle from <https://jitpack.io> adding this to your root build.gradle file:
  ```gradle
   allprojects {
     repositories {
@@ -72,16 +72,16 @@ A small library to handle Android fingerprint APIs.
   }, getSupportFragmentManager());
   ```
 
-#### Encryption
+#### Encryption/Decryption
 
-  Authentication will be don only using fingerprint APIs, so if fingerprint is not present or suitable, it will fail.
+  Encryption/decryption operations will be only done using fingerprint APIs, so if fingerprint is not present or suitable, it will fail.
 
   Logic to encrypt an String message using the library:
   ```java
   fingerPrintManager.encrypt(messageToBeEncrypted, new JFingerprintManager.EncryptCallback() {
       @Override
       public void onFingerprintNotRecognized() {
-        // Logic when fingerprint was not recognized not available
+        // Logic when fingerprint was not recognized
       }
 
       @Override
@@ -101,10 +101,41 @@ A small library to handle Android fingerprint APIs.
 
       @Override
       public void onEncryptionFailed() {
-          // Logic to handle encryption failed
+          // Logic to handle encryption failure
       }
   }, getSupportFragmentManager());
   ```
+
+
+    Logic to decrypt an already encrypted message:
+    ```java
+    fingerPrintManager.decrypt(messageToDecrypt, new JFingerprintManager.DecryptionCallback() {
+        @Override
+        public void onFingerprintNotRecognized() {
+            // Logic when fingerprint was not recognized
+        }
+
+        @Override
+        public void onAuthenticationFailedWithHelp(String help) {
+            // Logic when decryption failed with a message
+        }
+
+        @Override
+        public void onFingerprintNotAvailable() {
+            // Logic when fingerprint is not available
+        }
+
+        @Override
+        public void onDecryptionSuccess(String messageDecrypted) {
+            // Logic that handles successful decryption result
+        }
+
+        @Override
+        public void onDecryptionFailed() {
+            // Logic to handle decryption failure
+        }
+    }, getSupportFragmentManager());
+    ```
 
 
 ### Customisation:
@@ -149,7 +180,7 @@ In the [screenshots](#screenshots) section you can see some samples of the custo
  - Android Fingerprint Authentication: https://developer.android.com/about/versions/marshmallow/android-6.0.html#fingerprint-authentication
 
 #### Next steps:
- - Implement Kotlin variant of this code :sparkles:
+ - Implement Kotlin flavour of this code :sparkles:
 
 ### License
 MIT License

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">FingerPrintManager sample</string>
     <string name="encrypt_message_success">This is the encrypted message: %s</string>
+    <string name="decrypt_message_success">This is the decrypted message: %s</string>
 </resources>

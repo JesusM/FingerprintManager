@@ -3,14 +3,11 @@ package com.jesusm.jfingerprintmanager.base;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 
 import com.jesusm.jfingerprintmanager.JFingerprintManager;
 import com.jesusm.jfingerprintmanager.base.hardware.FingerprintHardware;
 import com.jesusm.jfingerprintmanager.base.model.FingerprintManagerCancellationSignal;
-
-import javax.crypto.Cipher;
 
 import static com.jesusm.jfingerprintmanager.base.FingerprintBaseDialogPresenter.BaseStage.FINGERPRINT;
 
@@ -19,8 +16,7 @@ public abstract class FingerprintBaseDialogPresenter extends
 
     private FingerprintManagerCancellationSignal cancellationSignal;
     protected FingerprintHardware fingerprintHardware;
-    @Nullable
-    private Cipher defaultCipher;
+    private FingerprintManagerCompat.CryptoObject cryptoObject;
 
     public interface Stage {
         String id();
@@ -80,9 +76,9 @@ public abstract class FingerprintBaseDialogPresenter extends
     }
 
     public void setFingerprintHardware(@NonNull FingerprintHardware fingerprintHardware,
-                                       @Nullable Cipher defaultCipher) {
+                                       @NonNull FingerprintManagerCompat.CryptoObject cryptoObject) {
         this.fingerprintHardware = fingerprintHardware;
-        this.defaultCipher = defaultCipher;
+        this.cryptoObject = cryptoObject;
     }
 
     @SuppressWarnings("MissingPermission")
@@ -90,7 +86,6 @@ public abstract class FingerprintBaseDialogPresenter extends
         cancellationSignal.start();
 
         // As soon as this is called, we are listening for fingerprint introduction.
-        FingerprintManagerCompat.CryptoObject cryptoObject = new FingerprintManagerCompat.CryptoObject(defaultCipher);
         fingerprintHardware.authenticate(cryptoObject, 0, cancellationSignal.getCancellationSignal(), this, null);
     }
 

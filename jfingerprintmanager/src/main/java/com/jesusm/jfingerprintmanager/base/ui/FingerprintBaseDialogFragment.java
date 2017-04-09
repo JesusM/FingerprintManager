@@ -23,21 +23,19 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.jesusm.jfingerprintmanager.R;
 import com.jesusm.jfingerprintmanager.JFingerprintManager;
+import com.jesusm.jfingerprintmanager.R;
 import com.jesusm.jfingerprintmanager.base.FingerprintAssetsManager;
 import com.jesusm.jfingerprintmanager.base.FingerprintBaseDialogPresenter;
 import com.jesusm.jfingerprintmanager.base.hardware.FingerprintHardware;
-
-import javax.crypto.Cipher;
 
 public class FingerprintBaseDialogFragment<P extends FingerprintBaseDialogPresenter> extends AppCompatDialogFragment
         implements FingerprintBaseDialogPresenter.View {
@@ -156,7 +154,7 @@ public class FingerprintBaseDialogFragment<P extends FingerprintBaseDialogPresen
         private int customStyle;
         private JFingerprintManager.FingerprintBaseCallback callback;
         private FingerprintHardware fingerPrintHardware;
-        @Nullable private Cipher defaultCipher;
+        private FingerprintManagerCompat.CryptoObject cryptoObject;
 
         public Builder withCustomStyle(int customStyle) {
             this.customStyle = customStyle;
@@ -170,7 +168,8 @@ public class FingerprintBaseDialogFragment<P extends FingerprintBaseDialogPresen
 
         public Builder withFingerprintHardwareInformation(FingerprintAssetsManager fingerprintAssetsManager) {
             this.fingerPrintHardware = fingerprintAssetsManager.getFingerprintHardware();
-            this.defaultCipher = fingerprintAssetsManager.getDefaultCipher();
+            this.cryptoObject = fingerprintAssetsManager.getCryptoObject();
+
             return this;
         }
 
@@ -185,7 +184,7 @@ public class FingerprintBaseDialogFragment<P extends FingerprintBaseDialogPresen
             P presenter = createPresenter(dialogFragment);
             dialogFragment.setPresenter(presenter);
             if (fingerPrintHardware != null) {
-                presenter.setFingerprintHardware(fingerPrintHardware, defaultCipher);
+                presenter.setFingerprintHardware(fingerPrintHardware, cryptoObject);
             }
 
             if (customStyle != -1) {

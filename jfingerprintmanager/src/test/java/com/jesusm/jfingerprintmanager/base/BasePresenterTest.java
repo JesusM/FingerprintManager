@@ -1,11 +1,11 @@
 package com.jesusm.jfingerprintmanager.base;
 
-import com.jesusm.jfingerprintmanager.base.hardware.FingerprintHardware;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
+
 import com.jesusm.jfingerprintmanager.authentication.presenter.FingerprintAuthenticationDialogPresenter;
+import com.jesusm.jfingerprintmanager.base.hardware.FingerprintHardware;
 
 import org.mockito.Mock;
-
-import javax.crypto.Cipher;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,7 +30,7 @@ public class BasePresenterTest {
         }
 
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(fingerprintAvailable);
-        presenter.setFingerprintHardware(mockFingerprintHardware, mock(Cipher.class));
+        presenter.setFingerprintHardware(mockFingerprintHardware, mock(FingerprintManagerCompat.CryptoObject.class));
 
         return presenter;
     }

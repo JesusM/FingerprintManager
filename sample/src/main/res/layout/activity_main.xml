@@ -79,19 +79,32 @@
         android:layout_marginTop="32dp"
         android:text="Authenticate" />
 
-    <Button
-        android:id="@+id/buttonEncrypt"
+    <LinearLayout
+        android:id="@+id/encryptionContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Encrypt text" />
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/buttonEncrypt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Encrypt text" />
+
+        <Button
+            android:id="@+id/buttonDecrypt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Decrypt text"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/buttonEncrypt"
+        android:layout_above="@id/encryptionContainer"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
         android:ems="10"

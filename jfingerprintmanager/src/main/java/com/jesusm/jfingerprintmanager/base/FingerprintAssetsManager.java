@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Log;
 
 import com.jesusm.jfingerprintmanager.JFingerprintManager;
@@ -11,7 +12,6 @@ import com.jesusm.jfingerprintmanager.base.hardware.FingerprintHardware;
 import com.jesusm.jfingerprintmanager.base.keystore.KeyStoreManager;
 import com.jesusm.jfingerprintmanager.base.model.FingerprintErrorState;
 
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
@@ -21,7 +21,6 @@ import javax.crypto.NoSuchPaddingException;
 import static com.jesusm.jfingerprintmanager.base.model.FingerprintErrorState.FINGERPRINT_INITIALISATION_ERROR;
 import static com.jesusm.jfingerprintmanager.base.model.FingerprintErrorState.FINGERPRINT_NOT_AVAILABLE;
 import static com.jesusm.jfingerprintmanager.base.model.FingerprintErrorState.FINGERPRINT_NOT_ENROLLED;
-import static com.jesusm.jfingerprintmanager.base.model.FingerprintErrorState.LOCK_SCREEN_RESET_OR_DISABLED;
 import static com.jesusm.jfingerprintmanager.base.model.FingerprintErrorState.NEW_FINGERPRINT_ENROLLED;
 
 public class FingerprintAssetsManager {
@@ -30,6 +29,7 @@ public class FingerprintAssetsManager {
     private KeyStoreManager keyStoreManager;
     private String keyStoreAlias;
     private FingerprintErrorState errorState;
+    private Cipher cipher;
 
     @VisibleForTesting
     public FingerprintAssetsManager(Context context, FingerprintHardware fingerprintHardware, KeyStoreManager keyStoreManager, String keyStoreAlias) {
@@ -44,70 +44,46 @@ public class FingerprintAssetsManager {
     }
 
     public void initSecureDependencies(@Nullable JFingerprintManager.InitialisationCallback callback) {
-        if (!isFingerprintAuthAvailable()) {
-            errorState = FINGERPRINT_NOT_AVAILABLE;
-            if (callback != null) {
-                callback.onFingerprintNotAvailable();
-            }
-            logError(errorState.getErrorMessage());
-            return;
-        }
+        initSecureDependenciesForDecryption(callback, null);
+    }
 
-        try {
-            keyStoreManager.createKeyStore();
-        } catch (KeyStoreException e) {
-            errorState = FINGERPRINT_INITIALISATION_ERROR;
-            if (callback != null) {
-                callback.onErrorFingerprintNotInitialised();
-            }
-            logError(errorState.getErrorMessage());
+    public void initSecureDependenciesForDecryption(@Nullable JFingerprintManager.InitialisationCallback callback,
+                                                    @Nullable byte[] IVs) {
+        initSecureDependenciesWithIVs(callback, IVs);
+    }
+
+    private void initSecureDependenciesWithIVs(@Nullable JFingerprintManager.InitialisationCallback callback,
+                                               @Nullable byte[] IVs) {
+        if (!isFingerprintAuthAvailable()) {
+            handleError(callback, FINGERPRINT_NOT_AVAILABLE);
             return;
         }
 
         try {
             keyStoreManager.createKeyGenerator();
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            errorState = FINGERPRINT_INITIALISATION_ERROR;
-            if (callback != null) {
-                callback.onErrorFingerprintNotInitialised();
-            }
-            logError(errorState.getErrorMessage());
-            return;
-        }
-
-        try {
-            keyStoreManager.createCipher();
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            errorState = FINGERPRINT_INITIALISATION_ERROR;
-            if (callback != null) {
-                callback.onErrorFingerprintNotInitialised();
-            }
-            logError(errorState.getErrorMessage());
+            handleError(callback, FINGERPRINT_INITIALISATION_ERROR);
             return;
         }
 
         if (!keyStoreManager.isFingerprintEnrolled()) {
-            errorState = FINGERPRINT_NOT_ENROLLED;
-            if (callback != null) {
-                callback.onErrorFingerprintNotEnrolled();
-            }
-            logError(errorState.getErrorMessage());
+            handleError(callback, FINGERPRINT_NOT_ENROLLED);
             return;
         }
 
         try {
-            keyStoreManager.createKey(keyStoreAlias, true);
-            keyStoreManager.initDefaultCipher();
-        } catch (RuntimeException e) {
-            errorState = LOCK_SCREEN_RESET_OR_DISABLED;
-            if (callback != null) {
-                callback.onErrorFingerprintNotInitialised();
+            if (IVs == null) {
+                cipher = keyStoreManager.initDefaultCipher(keyStoreAlias);
+            } else {
+                cipher = keyStoreManager.initCipherForDecryption(keyStoreAlias, IVs);
             }
-            logError(LOCK_SCREEN_RESET_OR_DISABLED.getErrorMessage());
-            return;
         } catch (KeyStoreManager.NewFingerprintEnrolledException e) {
-            errorState = NEW_FINGERPRINT_ENROLLED;
-            logError(errorState.getErrorMessage());
+            handleError(callback, NEW_FINGERPRINT_ENROLLED);
+            return;
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException |
+                KeyStoreManager.InitialisationException e) {
+            handleError(callback, FINGERPRINT_INITIALISATION_ERROR);
+            return;
         }
 
         boolean isCipherAvailable = keyStoreManager.isCipherAvailable();
@@ -116,8 +92,33 @@ public class FingerprintAssetsManager {
             if (isCipherAvailable) {
                 callback.onInitialisationSuccessfullyCompleted();
             } else {
-                callback.onErrorFingerprintNotInitialised();
+                handleError(callback, FINGERPRINT_INITIALISATION_ERROR);
             }
+        }
+    }
+
+    private void handleError(@Nullable JFingerprintManager.InitialisationCallback callback,
+                             FingerprintErrorState errorState) {
+        this.errorState = errorState;
+        logError(errorState.getErrorMessage());
+
+        switch (errorState) {
+            case FINGERPRINT_NOT_AVAILABLE:
+                if (callback != null) {
+                    callback.onFingerprintNotAvailable();
+                }
+                break;
+            case FINGERPRINT_INITIALISATION_ERROR:
+                if (callback != null) {
+                    callback.onErrorFingerprintNotInitialised();
+                }
+                break;
+            case LOCK_SCREEN_RESET_OR_DISABLED:
+            case FINGERPRINT_NOT_ENROLLED:
+                if (callback != null) {
+                    callback.onErrorFingerprintNotEnrolled();
+                }
+                break;
         }
     }
 
@@ -126,7 +127,11 @@ public class FingerprintAssetsManager {
     }
 
     public void createKey(boolean invalidatedByBiometricEnrollment) {
-        keyStoreManager.createKey(keyStoreAlias, invalidatedByBiometricEnrollment);
+        try {
+            keyStoreManager.createKey(keyStoreAlias, invalidatedByBiometricEnrollment);
+        } catch (KeyStoreManager.InitialisationException e) {
+            logError(e.getMessage());
+        }
     }
 
     private void logError(@StringRes int message) {
@@ -143,11 +148,11 @@ public class FingerprintAssetsManager {
         return fingerprintHardware;
     }
 
-    public Cipher getDefaultCipher() {
-        return keyStoreManager.getDefaultCipher();
-    }
-
     public FingerprintErrorState getErrorState() {
         return errorState;
+    }
+
+    public FingerprintManagerCompat.CryptoObject getCryptoObject() {
+        return new FingerprintManagerCompat.CryptoObject(cipher);
     }
 }
