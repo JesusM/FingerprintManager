@@ -12,6 +12,8 @@ A small library to handle Android fingerprint APIs.
 
  This library can be used to provide basic authentication through fingerprint API, using manual password as backup option. It also allows you to encrypt messages using fingerprint APIs.
  This library provides a sample to show how it can be used.
+ 
+ [![](https://jitpack.io/v/JesusM/FingerprintManager.svg)](https://jitpack.io/#JesusM/FingerprintManager)
 
 ### Basic use:
  You import via gradle from <https://jitpack.io> adding this to your root build.gradle file:
@@ -26,9 +28,11 @@ A small library to handle Android fingerprint APIs.
  and then adding the library as dependency:
  ```gradle
  dependencies {
-   compile 'com.github.JesusM:FingerprintManager:v1.0'
+   compile 'com.github.JesusM:FingerprintManager:{latest_version}'
  }
  ```
+ (you can see which is the {latest_version} value from [releases tab](https://github.com/JesusM/FingerprintManager/releases))
+ 
  Create the fingerprint manager.
  ```java
  fingerPrintManager = new JFingerprintManager(context, key);
@@ -105,38 +109,37 @@ A small library to handle Android fingerprint APIs.
       }
   }, getSupportFragmentManager());
   ```
+  Logic to decrypt an already encrypted message:
 
+  
+  ```java
+  fingerPrintManager.decrypt(messageToDecrypt, new JFingerprintManager.DecryptionCallback() {
+      @Override
+      public void onFingerprintNotRecognized() {
+          // Logic when fingerprint was not recognized
+      }
 
-    Logic to decrypt an already encrypted message:
-    ```java
-    fingerPrintManager.decrypt(messageToDecrypt, new JFingerprintManager.DecryptionCallback() {
-        @Override
-        public void onFingerprintNotRecognized() {
-            // Logic when fingerprint was not recognized
-        }
+      @Override
+      public void onAuthenticationFailedWithHelp(String help) {
+          // Logic when decryption failed with a message
+      }
 
-        @Override
-        public void onAuthenticationFailedWithHelp(String help) {
-            // Logic when decryption failed with a message
-        }
+      @Override
+      public void onFingerprintNotAvailable() {
+          // Logic when fingerprint is not available
+      }
 
-        @Override
-        public void onFingerprintNotAvailable() {
-            // Logic when fingerprint is not available
-        }
+      @Override
+      public void onDecryptionSuccess(String messageDecrypted) {
+          // Logic that handles successful decryption result
+      }
 
-        @Override
-        public void onDecryptionSuccess(String messageDecrypted) {
-            // Logic that handles successful decryption result
-        }
-
-        @Override
-        public void onDecryptionFailed() {
-            // Logic to handle decryption failure
-        }
-    }, getSupportFragmentManager());
-    ```
-
+      @Override
+      public void onDecryptionFailed() {
+          // Logic to handle decryption failure
+      }
+  }, getSupportFragmentManager());
+  ```
 
 ### Customisation:
 
