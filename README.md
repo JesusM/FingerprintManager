@@ -1,3 +1,5 @@
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-FingerprintManager-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5521)
+
 [![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=58e4023c2fb30e0001bf5dda&branch=master&build=latest)](https://dashboard.buddybuild.com/apps/58e4023c2fb30e0001bf5dda/build/latest?branch=master)
 
 JFingerprintManager
