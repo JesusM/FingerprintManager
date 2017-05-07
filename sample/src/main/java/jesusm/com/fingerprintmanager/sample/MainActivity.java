@@ -2,6 +2,7 @@ package jesusm.com.fingerprintmanager.sample;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -18,9 +19,10 @@ public class MainActivity extends AppCompatActivity {
     private Button authenticateButton;
     private Button encryptTextButton;
     private Button decryptTextButton;
-    private JFingerprintManager fingerPrintManager;
 
     private String messageToDecrypt;
+    @StyleRes
+    private int dialogTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initViews();
-
-        initFingerprintManager();
 
         initClickListeners();
     }
@@ -44,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
         selectView(findViewById(R.id.buttonDialogThemeLight));
     }
 
-    private void initFingerprintManager() {
-        fingerPrintManager = new JFingerprintManager(this, KEY);
-        fingerPrintManager.setAuthenticationDialogStyle(R.style.DialogThemeLight);
+    private JFingerprintManager createFingerprintManagerInstance()
+    {
+        JFingerprintManager fingerprintManager = new JFingerprintManager(this, KEY);
+        fingerprintManager.setAuthenticationDialogStyle(dialogTheme);
+        return fingerprintManager;
     }
 
     private void initClickListeners() {
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
                 deselectView(findViewById(R.id.buttonDialogThemeDark));
 
-                fingerPrintManager.setAuthenticationDialogStyle(R.style.DialogThemeLight);
+                dialogTheme = R.style.DialogThemeLight;
             }
         });
 
@@ -69,14 +71,14 @@ public class MainActivity extends AppCompatActivity {
 
                 deselectView(findViewById(R.id.buttonDialogThemeLight));
 
-                fingerPrintManager.setAuthenticationDialogStyle(R.style.DialogThemeDark);
+                dialogTheme = R.style.DialogThemeDark;
             }
         });
 
         authenticateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fingerPrintManager.startAuthentication(new JFingerprintManager.AuthenticationCallback() {
+                createFingerprintManagerInstance().startAuthentication(new JFingerprintManager.AuthenticationCallback() {
                     @Override
                     public void onAuthenticationSuccess() {
                         messageTextView.setText("Successfully authenticated");
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 messageToDecrypt = messageToBeEncryptedEditText.getText().toString();
-                fingerPrintManager.encrypt(messageToDecrypt, new JFingerprintManager.EncryptionCallback() {
+                createFingerprintManagerInstance().encrypt(messageToDecrypt, new JFingerprintManager.EncryptionCallback() {
                     @Override
                     public void onFingerprintNotRecognized() {
                         messageTextView.setText("Fingerprint not recognized");
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 messageToDecrypt = messageToBeEncryptedEditText.getText().toString();
-                fingerPrintManager.decrypt(messageToDecrypt, new JFingerprintManager.DecryptionCallback() {
+                createFingerprintManagerInstance().decrypt(messageToDecrypt, new JFingerprintManager.DecryptionCallback() {
                     @Override
                     public void onDecryptionSuccess(String messageDecrypted) {
                         String message = getString(R.string.decrypt_message_success, messageDecrypted);

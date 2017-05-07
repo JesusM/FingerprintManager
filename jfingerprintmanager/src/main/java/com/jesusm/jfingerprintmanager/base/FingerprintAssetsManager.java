@@ -86,7 +86,7 @@ public class FingerprintAssetsManager {
             return;
         }
 
-        boolean isCipherAvailable = keyStoreManager.isCipherAvailable();
+        boolean isCipherAvailable = cipher != null;
 
         if (callback != null) {
             if (isCipherAvailable) {

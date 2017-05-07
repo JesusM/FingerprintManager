@@ -33,7 +33,6 @@ public class KeyStoreManager {
 
     private KeyGenerator keyGenerator;
     private KeyguardManager keyguardManager;
-    private Cipher defaultCipher;
 
     public KeyStoreManager(Context context) {
         keyguardManager = context.getSystemService(KeyguardManager.class);
@@ -59,9 +58,9 @@ public class KeyStoreManager {
     }
 
     public Cipher initDefaultCipher(String key) throws NewFingerprintEnrolledException, InitialisationException, NoSuchPaddingException, NoSuchAlgorithmException {
-        defaultCipher = createCipher();
-        initCipher(defaultCipher, key);
-        return defaultCipher;
+        Cipher cipher = createCipher();
+        initCipher(cipher, key);
+        return cipher;
     }
 
     /**
@@ -109,13 +108,9 @@ public class KeyStoreManager {
     }
 
     public static class InitialisationException extends Throwable {
-        public InitialisationException(String message, Exception cause) {
+        InitialisationException(String message, Exception cause) {
             super(message, cause);
         }
-    }
-
-    public boolean isCipherAvailable() {
-        return defaultCipher != null;
     }
 
     @Nullable
