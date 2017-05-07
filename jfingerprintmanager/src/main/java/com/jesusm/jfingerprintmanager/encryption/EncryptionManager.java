@@ -83,6 +83,11 @@ public class EncryptionManager extends BaseFingerprintManager{
                         callback.onFingerprintNotAvailable();
                     }
 
+                    @Override
+                    public void onCancelled() {
+                        callback.onCancelled();
+                    }
+
                 };
 
                 FingerprintEncryptionDialogFragment.Builder builder = new FingerprintEncryptionDialogFragment.Builder();
@@ -154,6 +159,11 @@ public class EncryptionManager extends BaseFingerprintManager{
                     @Override
                     public void onFingerprintNotAvailable() {
                         callback.onFingerprintNotAvailable();
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        callback.onCancelled();
                     }
 
                 };

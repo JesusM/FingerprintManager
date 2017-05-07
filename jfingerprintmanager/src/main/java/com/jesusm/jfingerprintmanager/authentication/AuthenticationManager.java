@@ -19,47 +19,52 @@ public class AuthenticationManager extends BaseFingerprintManager {
         super(fingerprintAssetsManager, system);
     }
 
-    public void startAuthentication(@NonNull final JFingerprintManager.AuthenticationCallback authenticationCallback,
+    public void startAuthentication(@NonNull final JFingerprintManager.AuthenticationCallback callback,
                              @NonNull final FragmentManager fragmentManager) {
         fingerprintAssetsManager.initSecureDependencies(new JFingerprintManager.InitialisationCallback() {
             @Override
             public void onErrorFingerprintNotInitialised() {
-                authenticationCallback.onFingerprintNotAvailable();
+                callback.onFingerprintNotAvailable();
             }
 
             @Override
             public void onErrorFingerprintNotEnrolled() {
-                authenticationCallback.onFingerprintNotAvailable();
+                callback.onFingerprintNotAvailable();
             }
 
             @Override
             public void onInitialisationSuccessfullyCompleted() {
-                FingerprintAuthenticationDialogFragment.AuthenticationDialogCallback callback =
+                FingerprintAuthenticationDialogFragment.AuthenticationDialogCallback authenticationCallback =
                         new FingerprintAuthenticationDialogFragment.AuthenticationDialogCallback() {
 
                             @Override
                             public void onFingerprintNotRecognized() {
-                                authenticationCallback.onFingerprintNotRecognized();
+                                callback.onFingerprintNotRecognized();
                             }
 
                             @Override
                             public void onAuthenticationFailedWithHelp(String help) {
-                                authenticationCallback.onAuthenticationFailedWithHelp(help);
+                                callback.onAuthenticationFailedWithHelp(help);
                             }
 
                             @Override
                             public void onFingerprintNotAvailable() {
-                                authenticationCallback.onFingerprintNotAvailable();
+                                callback.onFingerprintNotAvailable();
+                            }
+
+                            @Override
+                            public void onCancelled() {
+                                callback.onCancelled();
                             }
 
                             @Override
                             public void onAuthenticationSuccess() {
-                                authenticationCallback.onAuthenticationSuccess();
+                                callback.onAuthenticationSuccess();
                             }
 
                             @Override
                             public void onSuccessWithManualPassword(@NonNull String password) {
-                                authenticationCallback.onSuccessWithManualPassword(password);
+                                callback.onSuccessWithManualPassword(password);
                             }
 
                             @Override
@@ -69,7 +74,7 @@ public class AuthenticationManager extends BaseFingerprintManager {
 
                             @Override
                             public void onPasswordInserted(String password) {
-                                authenticationCallback.onSuccessWithManualPassword(password);
+                                callback.onSuccessWithManualPassword(password);
                             }
                         };
 
@@ -77,12 +82,12 @@ public class AuthenticationManager extends BaseFingerprintManager {
                 FingerprintBaseDialogFragment.Builder builder = new FingerprintAuthenticationDialogFragment.Builder()
                         .newFingerprintEnrolled(errorState == LOCK_SCREEN_RESET_OR_DISABLED);
 
-                showFingerprintDialog(builder, fragmentManager, callback);
+                showFingerprintDialog(builder, fragmentManager, authenticationCallback);
             }
 
             @Override
             public void onFingerprintNotAvailable() {
-                authenticationCallback.onFingerprintNotAvailable();
+                callback.onFingerprintNotAvailable();
             }
         });
     }
