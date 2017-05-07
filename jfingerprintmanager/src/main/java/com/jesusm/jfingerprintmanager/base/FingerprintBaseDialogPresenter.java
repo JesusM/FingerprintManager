@@ -117,6 +117,10 @@ public abstract class FingerprintBaseDialogPresenter extends
         view.close();
     }
 
+    public void onDialogCancelled() {
+        view.onCancelled();
+    }
+
     public interface View extends JFingerprintManager.FingerprintBaseCallback {
         void onFingerprintDisplayed();
 

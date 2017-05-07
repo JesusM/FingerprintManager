@@ -82,6 +82,8 @@ public class JFingerprintManager {
         void onAuthenticationFailedWithHelp(String help);
 
         void onFingerprintNotAvailable();
+
+        void onCancelled();
     }
 
     public interface DecryptionCallback extends FingerprintBaseCallback{

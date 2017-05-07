@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
         selectView(findViewById(R.id.buttonDialogThemeLight));
     }
 
-    private JFingerprintManager createFingerprintManagerInstance()
-    {
+    private JFingerprintManager createFingerprintManagerInstance() {
         JFingerprintManager fingerprintManager = new JFingerprintManager(this, KEY);
         fingerprintManager.setAuthenticationDialogStyle(dialogTheme);
         return fingerprintManager;
@@ -103,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onFingerprintNotAvailable() {
                         messageTextView.setText("Fingerprint not available");
                     }
+
+                    @Override
+                    public void onCancelled() {
+                        messageTextView.setText("Operation cancelled by user");
+                    }
                 }, getSupportFragmentManager());
             }
         });
@@ -141,6 +145,11 @@ public class MainActivity extends AppCompatActivity {
                         messageTextView.setText("Encryption failed");
                     }
 
+                    @Override
+                    public void onCancelled() {
+                        messageTextView.setText("Operation cancelled by user");
+                    }
+
                 }, getSupportFragmentManager());
             }
         });
@@ -177,6 +186,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFingerprintNotAvailable() {
                         messageTextView.setText("Fingerprint not available");
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        messageTextView.setText("Operation cancelled by user");
                     }
                 }, getSupportFragmentManager());
             }

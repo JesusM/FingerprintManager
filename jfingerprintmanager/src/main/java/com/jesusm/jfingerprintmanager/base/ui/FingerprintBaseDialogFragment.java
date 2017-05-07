@@ -85,6 +85,13 @@ public class FingerprintBaseDialogFragment<P extends FingerprintBaseDialogPresen
         return alertDialog;
     }
 
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+
+        presenter.onDialogCancelled();
+    }
+
     @CallSuper
     protected void onDialogShown()
     {
@@ -98,7 +105,12 @@ public class FingerprintBaseDialogFragment<P extends FingerprintBaseDialogPresen
 
     @CallSuper
     protected void addDialogButtons(AlertDialog.Builder alertDialogBuilder) {
-        alertDialogBuilder.setNegativeButton(R.string.cancel, null);
+        alertDialogBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                presenter.onDialogCancelled();
+            }
+        });
     }
 
     private Context buildDialogContext() {
@@ -143,6 +155,11 @@ public class FingerprintBaseDialogFragment<P extends FingerprintBaseDialogPresen
     @Override
     public void close() {
         dismiss();
+    }
+
+    @Override
+    public void onCancelled() {
+        callback.onCancelled();
     }
 
     protected void updateDialogButtonText(int whichButton, @StringRes int resId) {

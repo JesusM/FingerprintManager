@@ -170,5 +170,8 @@ public class EncryptionManagerTest extends BaseTest {
 
         @Override
         public void onFingerprintNotAvailable() { }
+
+        @Override
+        public void onCancelled() { }
     }
 }
