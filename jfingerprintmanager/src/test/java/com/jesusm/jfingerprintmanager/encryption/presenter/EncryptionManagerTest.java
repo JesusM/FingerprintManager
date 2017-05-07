@@ -2,6 +2,7 @@ package com.jesusm.jfingerprintmanager.encryption.presenter;
 
 import com.jesusm.jfingerprintmanager.BaseTest;
 import com.jesusm.jfingerprintmanager.JFingerprintManager;
+import com.jesusm.jfingerprintmanager.base.keystore.KeyStoreManager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,10 +11,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,11 +65,11 @@ public class EncryptionManagerTest extends BaseTest {
     }
 
     @Test
-    public void fingerprintDisplayedIfCreationSuccessful() {
+    public void fingerprintDisplayedIfCreationSuccessful() throws KeyStoreManager.InitialisationException, KeyStoreManager.NewFingerprintEnrolledException, NoSuchAlgorithmException, NoSuchPaddingException {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
         when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        when(mockKeyStoreManager.isCipherAvailable()).thenReturn(true);
+        when(mockKeyStoreManager.initDefaultCipher(anyString())).thenReturn(mock(Cipher.class));
 
         JFingerprintManager.EncryptionCallback encryptionCallback = Mockito.mock(JFingerprintManager.EncryptionCallback.class);
         jFingerprintManager.encrypt("message", encryptionCallback, mockFragmentManager);
@@ -79,8 +83,7 @@ public class EncryptionManagerTest extends BaseTest {
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(false);
 
         EncryptionCallbackAdapter callbackAdapter = Mockito.mock(EncryptionCallbackAdapter.class);
-        String message = "message";
-        jFingerprintManager.encrypt(message, callbackAdapter, mockFragmentManager);
+        jFingerprintManager.encrypt("message", callbackAdapter, mockFragmentManager);
 
         verify(callbackAdapter).onFingerprintNotAvailable();
         verify(callbackAdapter, never()).onEncryptionSuccess(anyString());
@@ -91,7 +94,6 @@ public class EncryptionManagerTest extends BaseTest {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
         when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        when(mockKeyStoreManager.isCipherAvailable()).thenReturn(true);
 
         EncryptionCallbackAdapter callbackAdapter = Mockito.mock(EncryptionCallbackAdapter.class);
         jFingerprintManager.encrypt("", callbackAdapter, mockFragmentManager);
@@ -101,11 +103,11 @@ public class EncryptionManagerTest extends BaseTest {
     }
 
     @Test
-    public void encryptionDisplayedIfCreationSuccessful() {
+    public void encryptionDisplayedIfCreationSuccessful() throws KeyStoreManager.InitialisationException, KeyStoreManager.NewFingerprintEnrolledException, NoSuchAlgorithmException, NoSuchPaddingException {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
         when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        when(mockKeyStoreManager.isCipherAvailable()).thenReturn(true);
+        when(mockKeyStoreManager.initDefaultCipher(anyString())).thenReturn(mock(Cipher.class));
 
         JFingerprintManager.EncryptionCallback encryptionCallback = Mockito.mock(JFingerprintManager.EncryptionCallback.class);
         jFingerprintManager.encrypt("message", encryptionCallback, mockFragmentManager);
@@ -118,7 +120,6 @@ public class EncryptionManagerTest extends BaseTest {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
         when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        when(mockKeyStoreManager.isCipherAvailable()).thenReturn(true);
 
         JFingerprintManager.DecryptionCallback callbackAdapter = Mockito.mock(JFingerprintManager.DecryptionCallback.class);
         jFingerprintManager.decrypt("", callbackAdapter, mockFragmentManager);
@@ -132,7 +133,6 @@ public class EncryptionManagerTest extends BaseTest {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
         when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        when(mockKeyStoreManager.isCipherAvailable()).thenReturn(true);
 
         JFingerprintManager.DecryptionCallback callbackAdapter = Mockito.mock(JFingerprintManager.DecryptionCallback.class);
         jFingerprintManager.decrypt("message", callbackAdapter, mockFragmentManager);
@@ -142,18 +142,17 @@ public class EncryptionManagerTest extends BaseTest {
     }
 
     @Test
-    public void decryptionDisplayedIfCreationSuccessful() {
+    public void decryptionDisplayedIfCreationSuccessful() throws KeyStoreManager.InitialisationException, KeyStoreManager.NewFingerprintEnrolledException {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
         when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        when(mockKeyStoreManager.isCipherAvailable()).thenReturn(true);
+        when(mockKeyStoreManager.initCipherForDecryption(anyString(), any(byte[].class))).thenReturn(Mockito.mock(Cipher.class));
 
         JFingerprintManager.DecryptionCallback callbackAdapter = Mockito.mock(JFingerprintManager.DecryptionCallback.class);
         jFingerprintManager.decrypt("message:ivs", callbackAdapter, mockFragmentManager);
 
         verify(mockSystem).showDialog();
     }
-
 
     private class EncryptionCallbackAdapter implements JFingerprintManager.EncryptionCallback {
 

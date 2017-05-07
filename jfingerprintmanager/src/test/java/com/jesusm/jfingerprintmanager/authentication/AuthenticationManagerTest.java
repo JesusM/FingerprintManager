@@ -11,8 +11,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -60,11 +62,11 @@ public class AuthenticationManagerTest extends BaseTest{
     }
 
     @Test
-    public void authenticationDisplayedIfCreationSuccessful() {
+    public void authenticationDisplayedIfCreationSuccessful() throws KeyStoreManager.InitialisationException, KeyStoreManager.NewFingerprintEnrolledException, NoSuchAlgorithmException, NoSuchPaddingException {
         JFingerprintManager jFingerprintManager = createFingerPrintManager();
         when(mockFingerprintHardware.isFingerprintAuthAvailable()).thenReturn(true);
         when(mockKeyStoreManager.isFingerprintEnrolled()).thenReturn(true);
-        when(mockKeyStoreManager.isCipherAvailable()).thenReturn(true);
+        when(mockKeyStoreManager.initDefaultCipher(anyString())).thenReturn(Mockito.mock(Cipher.class));
 
         JFingerprintManager.AuthenticationCallback authenticationCallback = Mockito.mock(JFingerprintManager.AuthenticationCallback.class);
         jFingerprintManager.startAuthentication(authenticationCallback, mockFragmentManager);
