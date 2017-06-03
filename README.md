@@ -37,7 +37,7 @@ A small library to handle Android fingerprint APIs.
  
  Create the fingerprint manager.
  ```java
- fingerPrintManager = new KFingerprintManager(context, key);
+ fingerPrintManager = KFingerprintManager(context, key);
  ```
 
  `key` is the name for the symmetric key that is created in the Android Key Store. KFingerprintManager.InitialisationCallback contains a set of method that are called whether the fingerprint is ready to be used or when there is any error (like no fingerprint has been enrolled yet, or if there has been a problem initialising it).
@@ -49,33 +49,33 @@ A small library to handle Android fingerprint APIs.
  The library API is pretty simple, just call `startAuthentication` method passing to it a callback that will let you know the result of the operation. If the authentication went ok, you'll obtain a `CryptoObject` object that will let you use for authentication operations (see [encryption](#encryption) to see what you can do with that data)
 
  Logic to authenticate using fingerprint: 
-  ```java
-  fingerPrintManager.startAuthentication(new KFingerprintManager.AuthenticationCallback() {
-     @Override
-     public void onAuthenticationSuccess(@NonNull FingerprintManagerCompat.CryptoObject cryptoObject) {
-         // Logic when authentication has been successful
-     }
-            
-     @Override
-     public void onSuccessWithManualPassword(@NonNull String password) {
-         // Logic when authentication has been successful writting password manually
-     }
-            
-     @Override
-     public void onFingerprintNotRecognized() {
-         // Logic when fingerprint is not recognised
-     }
-            
-     @Override
-     public void onAuthenticationFailedWithHelp(String help) {
-         // Logic when authentication has failed
-     }
-            
-     @Override
-     public void onFingerprintNotAvailable() {
-         // Logic when fingerprint is not available
-     }
-  }, getSupportFragmentManager());
+
+  ```kotlin
+    fingerPrintManager.authenticate(object : KFingerprintManager.AuthenticationCallback {
+        override fun onAuthenticationFailedWithHelp(help: String?) {
+            // Logic when decryption failed with a message
+        }
+
+        override fun onAuthenticationSuccess() {
+            // Logic when authentication has been successful
+        }
+
+        override fun onSuccessWithManualPassword(password: String) {
+            // Logic when authentication has been successful writting password manually
+        }
+
+        override fun onFingerprintNotRecognized() {
+            // Logic when fingerprint was not recognized
+        }
+
+        override fun onFingerprintNotAvailable() {
+            // Logic when fingerprint is not available
+        }
+
+        override fun onCancelled() {
+            // Logic when operation is cancelled by user
+        }
+    }, getSupportFragmentManager());
   ```
 
 #### Encryption/Decryption
@@ -83,64 +83,63 @@ A small library to handle Android fingerprint APIs.
   Encryption/decryption operations will be only done using fingerprint APIs, so if fingerprint is not present or suitable, it will fail.
 
   Logic to encrypt an String message using the library:
-  ```java
-  fingerPrintManager.encrypt(messageToBeEncrypted, new KFingerprintManager.EncryptCallback() {
-      @Override
-      public void onFingerprintNotRecognized() {
-        // Logic when fingerprint was not recognized
-      }
+  ```kotlin
+    fingerPrintManager.encrypt(messageToBeEncrypted, object : KFingerprintManager.EncryptionCallback {
+        override fun onFingerprintNotRecognized() {
+            // Logic when fingerprint was not recognized
+        }
 
-      @Override
-      public void onAuthenticationFailedWithHelp(String help) {
-        // Logic when encryption failed with a message
-      }
+        override fun onAuthenticationFailedWithHelp(help: String?) {
+            // Logic when decryption failed with a message
+        }
 
-      @Override
-      public void onFingerprintNotAvailable() {
-        // Logic when fingerprint is not available
-      }
+        override fun onFingerprintNotAvailable() {
+            // Logic when fingerprint is not available
+        }
 
-      @Override
-      public void onEncryptionSuccess(String messageEncrypted) {
-          // Logic to handle the encrypted message
-      }
+        override fun onEncryptionSuccess(messageEncrypted: String) {
+            // Logic to handle the encrypted message
+        }
 
-      @Override
-      public void onEncryptionFailed() {
-          // Logic to handle encryption failure
-      }
-  }, getSupportFragmentManager());
+        override fun onEncryptionFailed() {
+            // Logic to handle decryption failure
+        }
+
+        override fun onCancelled() {
+            // Logic when operation is cancelled by user
+        }
+     }, getSupportFragmentManager());
   ```
+
   Logic to decrypt an already encrypted message:
 
   
-  ```java
-  fingerPrintManager.decrypt(messageToDecrypt, new KFingerprintManager.DecryptionCallback() {
-      @Override
-      public void onFingerprintNotRecognized() {
-          // Logic when fingerprint was not recognized
-      }
 
-      @Override
-      public void onAuthenticationFailedWithHelp(String help) {
-          // Logic when decryption failed with a message
-      }
+  ```kotlin
+    fingerPrintManager.decrypt(messageToDecrypt, object : KFingerprintManager.DecryptionCallback {
+        override fun onDecryptionSuccess(messageDecrypted: String) {
+            // Logic that handles successful decryption result
+        }
 
-      @Override
-      public void onFingerprintNotAvailable() {
-          // Logic when fingerprint is not available
-      }
+        override fun onDecryptionFailed() {
+            // Logic to handle decryption failure
+        }
 
-      @Override
-      public void onDecryptionSuccess(String messageDecrypted) {
-          // Logic that handles successful decryption result
-      }
+        override fun onFingerprintNotRecognized() {
+            // Logic when fingerprint was not recognized
+        }
 
-      @Override
-      public void onDecryptionFailed() {
-          // Logic to handle decryption failure
-      }
-  }, getSupportFragmentManager());
+        override fun onAuthenticationFailedWithHelp(help: String?) {
+            // Logic when decryption failed with a message
+        }
+
+        override fun onFingerprintNotAvailable() {
+            // Logic when fingerprint is not available
+        }
+
+        override fun onCancelled() {
+            // Logic when operation is cancelled by user
+        }, getSupportFragmentManager());
   ```
 
 ### Customisation:
@@ -160,8 +159,8 @@ The library allows you to customise how the visual component is displayed. In or
   ```
 
   2.- Once you have the theme, the library provides a method to set it:
-   ```java
-   fingerPrintManager.setAuthenticationDialogStyle(theme);
+   ```kotlin
+   fingerPrintManager.setAuthenticationStyle(theme);
    ```
 
 In the [screenshots](#screenshots) section you can see some samples of the customisations.
