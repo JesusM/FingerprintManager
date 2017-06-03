@@ -121,8 +121,9 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)?.setOnClickListener {
             val passwordText = password.text?.toString()
             val useFingerprintFuture = useFingerprintFutureCheckBox.isChecked
-            if (passwordText != null)
+            if (passwordText != null) {
                 presenter?.onPasswordEntered(passwordText, useFingerprintFuture)
+            }
         }
 
         fingerprintContainer?.let {

@@ -20,7 +20,7 @@ class KFingerprintManager(context: Context,
                           val authenticationManager: AuthenticationManager = AuthenticationManager(fingerprintAssetsManager, system),
                           val encryptionManager: EncryptionManager = EncryptionManager(encoder, fingerprintAssetsManager, system)) {
 
-    fun setAuthenticationStyle(@StyleRes styleRes: Int): Unit {
+    fun setAuthenticationDialogStyle(@StyleRes styleRes: Int): Unit {
         authenticationManager.authenticationDialogStyle = styleRes
         encryptionManager.authenticationDialogStyle = styleRes
     }

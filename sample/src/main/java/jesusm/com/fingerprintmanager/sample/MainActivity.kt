@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun createFingerprintManagerInstance(): KFingerprintManager {
         val fingerprintManager = KFingerprintManager(this, KEY)
-        fingerprintManager.setAuthenticationStyle(dialogTheme)
+        fingerprintManager.setAuthenticationDialogStyle(dialogTheme)
         return fingerprintManager
     }
 
