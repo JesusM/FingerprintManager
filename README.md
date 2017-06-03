@@ -2,7 +2,7 @@
 
 [![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=58e4023c2fb30e0001bf5dda&branch=master&build=latest)](https://dashboard.buddybuild.com/apps/58e4023c2fb30e0001bf5dda/build/latest?branch=master)
 
-JFingerprintManager
+KFingerprintManager
 -------------------
 A small library to handle Android fingerprint APIs.
  
@@ -37,10 +37,10 @@ A small library to handle Android fingerprint APIs.
  
  Create the fingerprint manager.
  ```java
- fingerPrintManager = new JFingerprintManager(context, key);
+ fingerPrintManager = new KFingerprintManager(context, key);
  ```
 
- `key` is the name for the symmetric key that is created in the Android Key Store. JFingerprintManager.InitialisationCallback contains a set of method that are called whether the fingerprint is ready to be used or when there is any error (like no fingerprint has been enrolled yet, or if there has been a problem initialising it).
+ `key` is the name for the symmetric key that is created in the Android Key Store. KFingerprintManager.InitialisationCallback contains a set of method that are called whether the fingerprint is ready to be used or when there is any error (like no fingerprint has been enrolled yet, or if there has been a problem initialising it).
 
  Once the library is ready to be used, it provides two features: authentication and encryption.
 
@@ -50,7 +50,7 @@ A small library to handle Android fingerprint APIs.
 
  Logic to authenticate using fingerprint: 
   ```java
-  fingerPrintManager.startAuthentication(new JFingerprintManager.AuthenticationCallback() {
+  fingerPrintManager.startAuthentication(new KFingerprintManager.AuthenticationCallback() {
      @Override
      public void onAuthenticationSuccess(@NonNull FingerprintManagerCompat.CryptoObject cryptoObject) {
          // Logic when authentication has been successful
@@ -84,7 +84,7 @@ A small library to handle Android fingerprint APIs.
 
   Logic to encrypt an String message using the library:
   ```java
-  fingerPrintManager.encrypt(messageToBeEncrypted, new JFingerprintManager.EncryptCallback() {
+  fingerPrintManager.encrypt(messageToBeEncrypted, new KFingerprintManager.EncryptCallback() {
       @Override
       public void onFingerprintNotRecognized() {
         // Logic when fingerprint was not recognized
@@ -115,7 +115,7 @@ A small library to handle Android fingerprint APIs.
 
   
   ```java
-  fingerPrintManager.decrypt(messageToDecrypt, new JFingerprintManager.DecryptionCallback() {
+  fingerPrintManager.decrypt(messageToDecrypt, new KFingerprintManager.DecryptionCallback() {
       @Override
       public void onFingerprintNotRecognized() {
           // Logic when fingerprint was not recognized
@@ -184,8 +184,6 @@ In the [screenshots](#screenshots) section you can see some samples of the custo
 ### Resources
  - Android Fingerprint Authentication: https://developer.android.com/about/versions/marshmallow/android-6.0.html#fingerprint-authentication
 
-#### Next steps:
- - Implement Kotlin flavour of this code :sparkles:
 
 ### License
 MIT License
