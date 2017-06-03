@@ -1,1 +1,1 @@
-include ':sample', ':jfingerprintmanager'
+include ':sample', ':kfingerprintmanager'

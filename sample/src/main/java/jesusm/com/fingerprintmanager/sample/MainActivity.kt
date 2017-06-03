@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import com.jesusm.jfingerprintmanager.JFingerprintManager
-import com.jesusm.jfingerprintmanager.utils.bind
+import com.jesusm.kfingerprintmanager.KFingerprintManager
+import com.jesusm.kfingerprintmanager.utils.bind
 
 class MainActivity : AppCompatActivity() {
     private val KEY = "my_key"
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         authenticateButton.value.setOnClickListener {
-            createFingerprintManagerInstance().authenticate(object : JFingerprintManager.AuthenticationCallback {
+            createFingerprintManagerInstance().authenticate(object : KFingerprintManager.AuthenticationCallback {
                 override fun onAuthenticationFailedWithHelp(help: String?) {
                     messageTextView.value.text = help
                 }
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         encryptTextButton.value.setOnClickListener {
             messageToDecrypt = messageToBeEncryptedEditText.value.text.toString()
-            createFingerprintManagerInstance().encrypt(messageToDecrypt, object : JFingerprintManager.EncryptionCallback {
+            createFingerprintManagerInstance().encrypt(messageToDecrypt, object : KFingerprintManager.EncryptionCallback {
                 override fun onFingerprintNotRecognized() {
                     messageTextView.value.text = "Fingerprint not recognized"
                 }
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
         decryptTextButton.value.setOnClickListener {
             messageToDecrypt = messageToBeEncryptedEditText.value.text.toString()
-            createFingerprintManagerInstance().decrypt(messageToDecrypt, object : JFingerprintManager.DecryptionCallback {
+            createFingerprintManagerInstance().decrypt(messageToDecrypt, object : KFingerprintManager.DecryptionCallback {
                 override fun onDecryptionSuccess(messageDecrypted: String) {
                     val message = getString(R.string.decrypt_message_success, messageDecrypted)
                     messageTextView.value.text = message
@@ -145,8 +145,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createFingerprintManagerInstance(): JFingerprintManager {
-        val fingerprintManager = JFingerprintManager(this, KEY)
+    private fun createFingerprintManagerInstance(): KFingerprintManager {
+        val fingerprintManager = KFingerprintManager(this, KEY)
         fingerprintManager.setAuthenticationStyle(dialogTheme)
         return fingerprintManager
     }

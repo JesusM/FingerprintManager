@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FingerprintManager.iml" filepath="$PROJECT_DIR$/FingerprintManager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jfingerprintmanager/jfingerprintmanager.iml" filepath="$PROJECT_DIR$/jfingerprintmanager/jfingerprintmanager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kfingerprintmanager/jfingerprintmanager.iml" filepath="$PROJECT_DIR$/kfingerprintmanager/jfingerprintmanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
     </modules>
   </component>

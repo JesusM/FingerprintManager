@@ -28,7 +28,7 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:' + parent.ext.supportLibsVersion
-    compile project(':jfingerprintmanager')
+    compile project(':kfingerprintmanager')
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.2-4"
 }
 
