@@ -126,10 +126,8 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
             }
         }
 
-        fingerprintContainer?.let {
-            it.visibility = GONE
-            showWithRevealEffect(it)
-        }
+        fingerprintContainer?.visibility = GONE
+        showWithRevealEffect(passwordContainer)
         password.requestFocus()
 
         if (newFingerprintEnrolled) {
