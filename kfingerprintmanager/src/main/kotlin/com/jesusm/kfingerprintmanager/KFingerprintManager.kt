@@ -20,17 +20,17 @@ class KFingerprintManager(context: Context,
                           val authenticationManager: AuthenticationManager = AuthenticationManager(fingerprintAssetsManager, system),
                           val encryptionManager: EncryptionManager = EncryptionManager(encoder, fingerprintAssetsManager, system)) {
 
-    fun setAuthenticationDialogStyle(@StyleRes styleRes: Int): Unit {
+    fun setAuthenticationDialogStyle(@StyleRes styleRes: Int) {
         authenticationManager.authenticationDialogStyle = styleRes
         encryptionManager.authenticationDialogStyle = styleRes
     }
 
     fun encrypt(messageToEncrypt: String, callback: EncryptionCallback,
-                fragmentManager: FragmentManager): Unit =
+                fragmentManager: FragmentManager) =
             encryptionManager.encrypt(messageToEncrypt, callback, fragmentManager)
 
     fun decrypt(messageToDecrypt: String, callback: DecryptionCallback,
-                fragmentManager: FragmentManager): Unit =
+                fragmentManager: FragmentManager) =
             encryptionManager.decrypt(messageToDecrypt, callback, fragmentManager)
 
     fun authenticate(authenticationCallback: AuthenticationCallback,

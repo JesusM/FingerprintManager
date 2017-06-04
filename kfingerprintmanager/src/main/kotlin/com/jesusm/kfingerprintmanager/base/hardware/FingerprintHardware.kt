@@ -10,14 +10,14 @@ import android.support.v4.os.CancellationSignal
 import com.jesusm.kfingerprintmanager.utils.CompatUtils
 
 class FingerprintHardware(val context: Context,
-                               val fingerprintManager: FingerprintManager = FingerprintHardware.SystemFingerprintManager(context),
-                               val compatUtils: CompatUtils = CompatUtils()) {
+                          val fingerprintManager: FingerprintManager = FingerprintHardware.SystemFingerprintManager(context),
+                          val compatUtils: CompatUtils = CompatUtils()) {
 
-    fun isFingerprintAuthAvailable() : Boolean = compatUtils.isMarshmallow() && fingerprintManager.isHardwareDetected && hasFingerprintRegistered()
+    fun isFingerprintAuthAvailable() = compatUtils.isMarshmallow() && fingerprintManager.isHardwareDetected && hasFingerprintRegistered()
 
-    private fun hasFingerprintRegistered() : Boolean = isPermissionGranted() && fingerprintManager.hasEnrolledFingerprints()
+    private fun hasFingerprintRegistered(): Boolean = isPermissionGranted() && fingerprintManager.hasEnrolledFingerprints()
 
-    private fun isPermissionGranted() : Boolean = fingerprintManager.isPermissionGranted
+    private fun isPermissionGranted(): Boolean = fingerprintManager.isPermissionGranted
 
     fun authenticate(crypto: FingerprintManagerCompat.CryptoObject?, flags: Int, cancellationSignal: CancellationSignal?,
                      callback: FingerprintManagerCompat.AuthenticationCallback, handler: Handler?) {

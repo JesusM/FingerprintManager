@@ -8,10 +8,12 @@ import android.support.v4.os.CancellationSignal
 import com.jesusm.kfingerprintmanager.utils.CompatUtils
 import com.nhaarman.mockito_kotlin.mock
 import junit.framework.Assert
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import kotlin.test.assertTrue
 import org.mockito.Mockito.`when` as _when
 
 class FingerprintHardwareTest {
@@ -24,7 +26,7 @@ class FingerprintHardwareTest {
         _when(mockFingerprintManager.isHardwareDetected).thenReturn(false)
         val fingerprintHardware = createFingerprintHardware(mockFingerprintManager)
 
-        Assert.assertFalse(fingerprintHardware.isFingerprintAuthAvailable())
+        assertFalse(fingerprintHardware.isFingerprintAuthAvailable())
     }
 
     @Before
@@ -54,7 +56,7 @@ class FingerprintHardwareTest {
         _when(mockCompatUtils.isMarshmallow()).thenReturn(false)
         val fingerprintHardware = createFingerprintHardware()
 
-        Assert.assertFalse(fingerprintHardware.isFingerprintAuthAvailable())
+        assertFalse(fingerprintHardware.isFingerprintAuthAvailable())
     }
 
     @Test
@@ -62,7 +64,7 @@ class FingerprintHardwareTest {
         _when(mockCompatUtils.isMarshmallow()).thenReturn(true)
         val fingerprintHardware = createFingerprintHardware()
 
-        Assert.assertTrue(fingerprintHardware.isFingerprintAuthAvailable())
+        assertTrue(fingerprintHardware.isFingerprintAuthAvailable())
     }
 
     private fun createFingerprintHardware(): FingerprintHardware {

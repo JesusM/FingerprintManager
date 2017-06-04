@@ -3,14 +3,15 @@ package com.jesusm.kfingerprintmanager.encryption
 class EncryptionData(var encryptedMessage: String, var encryptedIVs: String?,
                      val encoder: Encoder, val separator: String = ":") {
 
-    constructor(encryptedMessageString: String, encoder: Encoder, separator: String = ":") :
-            this(encryptedMessageString, encryptedMessageString, encoder, separator) {
+    constructor(encryptedMessageString: String, encoder: Encoder) :
+            this(encryptedMessageString, encryptedMessageString, encoder, ":") {
         val split = encryptedMessageString.split(separator)
         encryptedMessage = split[0]
-        if (split.size > 1)
+        if (split.size > 1) {
             encryptedIVs = split[1]
-        else
+        } else {
             encryptedIVs = null
+        }
     }
 
     constructor(encryptedMessage: ByteArray, encryptedIVs: ByteArray, encoder: Encoder) :

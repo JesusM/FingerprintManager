@@ -23,12 +23,12 @@ class FingerprintAssetsManager(val context: Context, val keyStoreAlias: String,
         initSecureDependenciesForDecryption(callback, null)
     }
 
-    fun initSecureDependenciesForDecryption(callback: KFingerprintManager.InitialisationCallback?,
+    fun initSecureDependenciesForDecryption(callback: KFingerprintManager.InitialisationCallback,
                                             IVs: ByteArray?) {
         initSecureDependenciesWithIVs(callback, IVs)
     }
 
-    private fun initSecureDependenciesWithIVs(callback: KFingerprintManager.InitialisationCallback?,
+    private fun initSecureDependenciesWithIVs(callback: KFingerprintManager.InitialisationCallback,
                                               IVs: ByteArray?) {
         if (!isFingerprintAuthAvailable()) {
             handleError(callback, FingerprintErrorState.FINGERPRINT_NOT_AVAILABLE)
@@ -72,24 +72,23 @@ class FingerprintAssetsManager(val context: Context, val keyStoreAlias: String,
 
         val isCipherAvailable = cipher != null
 
-        if (callback != null) {
-            if (isCipherAvailable) {
-                callback.onInitialisationSuccessfullyCompleted()
-            } else {
-                handleError(callback, FingerprintErrorState.FINGERPRINT_INITIALISATION_ERROR)
-            }
+        if (isCipherAvailable) {
+            callback.onInitialisationSuccessfullyCompleted()
+        } else {
+            handleError(callback, FingerprintErrorState.FINGERPRINT_INITIALISATION_ERROR)
         }
     }
 
-    private fun handleError(callback: KFingerprintManager.InitialisationCallback?,
+    private fun handleError(callback: KFingerprintManager.InitialisationCallback,
                             errorState: FingerprintErrorState) {
         this.errorState = errorState
         logError(errorState.errorMessage)
 
         when (errorState) {
-            FingerprintErrorState.FINGERPRINT_NOT_AVAILABLE -> callback?.onFingerprintNotAvailable()
-            FingerprintErrorState.FINGERPRINT_INITIALISATION_ERROR -> callback?.onErrorFingerprintNotInitialised()
-            FingerprintErrorState.LOCK_SCREEN_RESET_OR_DISABLED, FingerprintErrorState.FINGERPRINT_NOT_ENROLLED -> callback?.onErrorFingerprintNotEnrolled()
+            FingerprintErrorState.FINGERPRINT_NOT_AVAILABLE -> callback.onFingerprintNotAvailable()
+            FingerprintErrorState.FINGERPRINT_INITIALISATION_ERROR -> callback.onErrorFingerprintNotInitialised()
+            FingerprintErrorState.LOCK_SCREEN_RESET_OR_DISABLED, FingerprintErrorState.FINGERPRINT_NOT_ENROLLED -> callback.onErrorFingerprintNotEnrolled()
+            else -> callback.onErrorFingerprintNotInitialised()
         }
     }
 

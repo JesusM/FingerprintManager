@@ -2,11 +2,11 @@ package com.jesusm.kfingerprintmanager.base.keystore
 
 import android.app.KeyguardManager
 import android.content.Context
-import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
 import android.util.Log
+import com.jesusm.kfingerprintmanager.utils.CompatUtils
 import java.io.IOException
 import java.security.*
 import java.security.cert.CertificateException
@@ -18,7 +18,8 @@ import javax.crypto.spec.IvParameterSpec
 
 class KeyStoreManager(val context: Context,
                       private var keyGenerator: KeyGenerator? = null,
-                      private val ANDROID_KEY_STORE: String = "AndroidKeyStore") {
+                      private val ANDROID_KEY_STORE: String = "AndroidKeyStore",
+                      private val compatUtils: CompatUtils = CompatUtils()) {
 
     private val keyguardManager: KeyguardManager by lazy {
         context.getSystemService(KeyguardManager::class.java)
@@ -164,9 +165,10 @@ class KeyStoreManager(val context: Context,
             // visible on API level +24.
             // Ideally there should be a compat library for KeyGenParameterSpec.Builder but
             // which isn't available yet.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (compatUtils.isN()) {
                 builder.setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment)
             }
+
             keyGenerator?.apply {
                 init(builder.build())
                 generateKey()
