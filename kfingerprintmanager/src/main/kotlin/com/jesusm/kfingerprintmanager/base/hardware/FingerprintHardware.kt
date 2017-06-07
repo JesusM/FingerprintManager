@@ -19,7 +19,7 @@ class FingerprintHardware(val context: Context,
 
     private fun isPermissionGranted(): Boolean = fingerprintManager.isPermissionGranted
 
-    fun authenticate(crypto: FingerprintManagerCompat.CryptoObject?, flags: Int, cancellationSignal: CancellationSignal?,
+    fun authenticate(crypto: FingerprintManagerCompat.CryptoObject, flags: Int, cancellationSignal: CancellationSignal,
                      callback: FingerprintManagerCompat.AuthenticationCallback, handler: Handler?) {
         fingerprintManager.authenticate(crypto, flags, cancellationSignal, callback, handler)
     }

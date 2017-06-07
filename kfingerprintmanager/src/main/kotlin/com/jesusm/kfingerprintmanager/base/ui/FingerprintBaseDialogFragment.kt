@@ -24,8 +24,9 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
 
     var callback: KFingerprintManager.FingerprintBaseCallback? = null
     lateinit var dialogRootView: View
-    var fingerprintContainer: View? = null
+    lateinit var fingerprintContainer: View
     lateinit var alertDialog: AlertDialog
+    private var customDialogStyle: Int = 0
 
     var presenter by Delegates.observable<T?>(null) {
         _, _, new ->
@@ -33,8 +34,6 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
     }
 
     open fun onPresenterChanged(new: T?) {}
-
-    private var customDialogStyle: Int = 0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val context = buildDialogContext()
@@ -78,7 +77,7 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
 
     override fun onFingerprintDisplayed() {
         updateDialogButtonText(DialogInterface.BUTTON_NEGATIVE, R.string.cancel)
-        fingerprintContainer?.visibility = View.VISIBLE
+        fingerprintContainer.visibility = View.VISIBLE
     }
 
     fun updateDialogButtonText(whichButton: Int, @StringRes resId: Int) {
@@ -114,8 +113,8 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
     abstract class Builder<D : FingerprintBaseDialogFragment<P>, P : FingerprintBaseDialogPresenter> {
         private var customStyle: Int = 0
         private var callback: KFingerprintManager.FingerprintBaseCallback? = null
-        private var fingerPrintHardware: FingerprintHardware? = null
-        private var cryptoObject: FingerprintManagerCompat.CryptoObject? = null
+        private lateinit var fingerPrintHardware: FingerprintHardware
+        private lateinit var cryptoObject: FingerprintManagerCompat.CryptoObject
 
         fun withCustomStyle(customStyle: Int): Builder<*, *> {
             this.customStyle = customStyle
@@ -145,9 +144,7 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
 
             val presenter = createPresenter(dialogFragment)
             dialogFragment.presenter = presenter
-            fingerPrintHardware?.apply {
-                presenter.setFingerprintHardware(this, cryptoObject)
-            }
+            presenter.setFingerprintHardware(fingerPrintHardware, cryptoObject)
             if (customStyle != -1) {
                 dialogFragment.customDialogStyle = customStyle
             }

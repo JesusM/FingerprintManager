@@ -9,7 +9,7 @@ class FingerprintEncryptionDialogPresenter(view : View) : FingerprintBaseDialogP
     }
 
     override fun onViewShown() {
-        fingerprintHardware?.apply {
+        fingerprintHardware.apply {
             if (isFingerprintAuthAvailable().not()) {
                 close()
                 return

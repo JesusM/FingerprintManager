@@ -52,7 +52,7 @@ class FingerprintAuthenticationDialogPresenter(view: View) : FingerprintBaseDial
     }
 
     override fun onViewShown() {
-        if (fingerprintHardware?.isFingerprintAuthAvailable() == false) {
+        if (!fingerprintHardware.isFingerprintAuthAvailable()) {
             stage = Stage.PASSWORD
         }
 
