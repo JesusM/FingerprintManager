@@ -2,18 +2,18 @@ package com.jesusm.kfingerprintmanager.base.model
 
 import android.support.v4.os.CancellationSignal
 
-class FingerprintManagerCancellationSignal(var cancellationSignal: CancellationSignal? = null) {
+class FingerprintManagerCancellationSignal(val cancellationSignal: CancellationSignal = CancellationSignal()) {
+    var isCancelled : Boolean = false
+
     fun start() {
         cancel()
-        cancellationSignal = CancellationSignal()
+        isCancelled = false
     }
 
     fun cancel() {
-        if (isCancelled().not()) {
-            cancellationSignal?.cancel()
-            cancellationSignal = null
+        if (isCancelled.not()) {
+            cancellationSignal.cancel()
+            isCancelled = true
         }
     }
-
-    fun isCancelled(): Boolean = cancellationSignal == null
 }

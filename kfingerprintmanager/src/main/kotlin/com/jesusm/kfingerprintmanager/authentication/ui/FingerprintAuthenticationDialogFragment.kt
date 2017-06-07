@@ -110,7 +110,7 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
     }
 
     override fun onFingerprintDisplayed() {
-        fingerprintContainer?.visibility = VISIBLE
+        fingerprintContainer.visibility = VISIBLE
         passwordContainer.visibility = GONE
     }
 
@@ -126,7 +126,7 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
             }
         }
 
-        fingerprintContainer?.visibility = GONE
+        fingerprintContainer.visibility = GONE
         showWithRevealEffect(passwordContainer)
         password.requestFocus()
 

@@ -9,7 +9,6 @@ import com.jesusm.kfingerprintmanager.base.hardware.FingerprintHardware
 import com.jesusm.kfingerprintmanager.base.keystore.KeyStoreManager
 import com.jesusm.kfingerprintmanager.base.model.FingerprintErrorState
 import java.security.NoSuchAlgorithmException
-import java.security.NoSuchProviderException
 import javax.crypto.Cipher
 import javax.crypto.NoSuchPaddingException
 
@@ -32,16 +31,6 @@ class FingerprintAssetsManager(val context: Context, val keyStoreAlias: String,
                                               IVs: ByteArray?) {
         if (!isFingerprintAuthAvailable()) {
             handleError(callback, FingerprintErrorState.FINGERPRINT_NOT_AVAILABLE)
-            return
-        }
-
-        try {
-            keyStoreManager.createKeyGenerator()
-        } catch (e: NoSuchAlgorithmException) {
-            handleError(callback, FingerprintErrorState.FINGERPRINT_INITIALISATION_ERROR)
-            return
-        } catch (e: NoSuchProviderException) {
-            handleError(callback, FingerprintErrorState.FINGERPRINT_INITIALISATION_ERROR)
             return
         }
 

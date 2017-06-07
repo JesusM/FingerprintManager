@@ -6,9 +6,10 @@ import com.jesusm.kfingerprintmanager.base.hardware.FingerprintHardware
 import com.jesusm.kfingerprintmanager.base.model.FingerprintManagerCancellationSignal
 
 abstract class FingerprintBaseDialogPresenter(val view: View, var stage: Stage = FingerprintBaseDialogPresenter.Stage.FINGERPRINT,
-                                              var cancellationSignal: FingerprintManagerCancellationSignal = FingerprintManagerCancellationSignal(),
-                                              var fingerprintHardware: FingerprintHardware? = null,
-                                              var cryptoObject: FingerprintManagerCompat.CryptoObject? = null) : FingerprintManagerCompat.AuthenticationCallback() {
+                                              var cancellationSignal: FingerprintManagerCancellationSignal = FingerprintManagerCancellationSignal()) : FingerprintManagerCompat.AuthenticationCallback() {
+    lateinit var fingerprintHardware: FingerprintHardware
+    private lateinit var cryptoObject: FingerprintManagerCompat.CryptoObject
+
     /**
      * Enumeration to indicate which authentication method the user is trying to authenticate with.
      */
@@ -46,21 +47,19 @@ abstract class FingerprintBaseDialogPresenter(val view: View, var stage: Stage =
     }
 
     private fun startAuthenticationListener() {
-        cancellationSignal.start()
+        cancellationSignal = FingerprintManagerCancellationSignal()
 
         // As soon as this is called, we are listening for fingerprint introduction.
-        cancellationSignal.cancellationSignal?.let {
-            fingerprintHardware?.authenticate(cryptoObject, 0, it, this, null)
-        }
+        fingerprintHardware.authenticate(cryptoObject, 0, cancellationSignal.cancellationSignal, this, null)
     }
 
-    fun setFingerprintHardware(hardware: FingerprintHardware, cryptoObject: FingerprintManagerCompat.CryptoObject?) {
+    fun setFingerprintHardware(hardware: FingerprintHardware, cryptoObject: FingerprintManagerCompat.CryptoObject) {
         fingerprintHardware = hardware
         this.cryptoObject = cryptoObject
     }
 
     override fun onAuthenticationError(errMsgId: Int, errString: CharSequence?) {
-        if (cancellationSignal.isCancelled().not()) {
+        if (cancellationSignal.isCancelled.not()) {
             onAuthenticationFailed()
         }
     }

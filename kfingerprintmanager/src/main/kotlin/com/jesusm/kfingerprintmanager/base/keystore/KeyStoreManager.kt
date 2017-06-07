@@ -17,7 +17,6 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 
 class KeyStoreManager(val context: Context,
-                      private var keyGenerator: KeyGenerator? = null,
                       private val ANDROID_KEY_STORE: String = "AndroidKeyStore",
                       private val compatUtils: CompatUtils = CompatUtils()) {
 
@@ -44,9 +43,8 @@ class KeyStoreManager(val context: Context,
     }
 
     @Throws(NoSuchAlgorithmException::class, NoSuchProviderException::class)
-    fun createKeyGenerator() {
-        keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE)
-    }
+    fun createKeyGenerator(): KeyGenerator =
+            KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE)
 
     /**
      * Initialize the [Cipher] instance with the created key in the
@@ -143,7 +141,7 @@ class KeyStoreManager(val context: Context,
      * *                                         enrolled.). Note that this parameter is only valid if
      * *                                         the app works on Android N developer preview.
      */
-    @Throws(InitialisationException::class)
+    @Throws(InitialisationException::class, NoSuchAlgorithmException::class, NoSuchProviderException::class)
     fun createKey(keyStoreAlias: String, invalidatedByBiometricEnrollment: Boolean) {
         // The enrolling flow for fingerprint. This is where you ask the user to set up fingerprint
         // for your flow. Use of keys is necessary if you need to know if the set of
@@ -169,7 +167,9 @@ class KeyStoreManager(val context: Context,
                 builder.setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment)
             }
 
-            keyGenerator?.apply {
+            val keyGenerator = createKeyGenerator()
+
+            keyGenerator.apply {
                 init(builder.build())
                 generateKey()
             }
