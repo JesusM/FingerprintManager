@@ -12,13 +12,13 @@ import com.jesusm.kfingerprintmanager.encryption.Base64Encoder
 import com.jesusm.kfingerprintmanager.encryption.Encoder
 import com.jesusm.kfingerprintmanager.encryption.EncryptionManager
 
-class KFingerprintManager(context: Context,
-                          keyStoreAlias: String,
-                          system: System = SystemImpl(),
-                          fingerprintAssetsManager: FingerprintAssetsManager = FingerprintAssetsManager(context, keyStoreAlias),
-                          encoder: Encoder = Base64Encoder(),
-                          val authenticationManager: AuthenticationManager = AuthenticationManager(fingerprintAssetsManager, system),
-                          val encryptionManager: EncryptionManager = EncryptionManager(encoder, fingerprintAssetsManager, system)) {
+class KFingerprintManager @JvmOverloads constructor(context: Context,
+                                                    keyStoreAlias: String,
+                                                    system: System = SystemImpl(),
+                                                    fingerprintAssetsManager: FingerprintAssetsManager = FingerprintAssetsManager(context, keyStoreAlias),
+                                                    encoder: Encoder = Base64Encoder(),
+                                                    val authenticationManager: AuthenticationManager = AuthenticationManager(fingerprintAssetsManager, system),
+                                                    val encryptionManager: EncryptionManager = EncryptionManager(encoder, fingerprintAssetsManager, system)) {
 
     fun setAuthenticationDialogStyle(@StyleRes styleRes: Int) {
         authenticationManager.authenticationDialogStyle = styleRes
