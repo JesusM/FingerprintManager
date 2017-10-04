@@ -38,7 +38,7 @@
             android:layout_below="@+id/description"
             android:layout_marginTop="16dp"
             android:ems="10"
-            android:hint="@string/password_description"
+            tools:hint="@string/password_description"
             android:imeOptions="actionGo"
             android:inputType="textPassword" />
 
@@ -52,7 +52,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         android:checked="true"
-        android:text="@string/use_fingerprint_in_future"
+        tools:text="@string/use_fingerprint_in_future"
         android:visibility="gone"
         tools:visibility="visible" />
 

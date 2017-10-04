@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
 import com.jesusm.kfingerprintmanager.authentication.AuthenticationManager
 import com.jesusm.kfingerprintmanager.base.FingerprintAssetsManager
+import com.jesusm.kfingerprintmanager.base.ui.Style
 import com.jesusm.kfingerprintmanager.base.ui.System
 import com.jesusm.kfingerprintmanager.base.ui.SystemImpl
 import com.jesusm.kfingerprintmanager.encryption.Base64Encoder
@@ -21,8 +22,12 @@ class KFingerprintManager @JvmOverloads constructor(context: Context,
                                                     val encryptionManager: EncryptionManager = EncryptionManager(encoder, fingerprintAssetsManager, system)) {
 
     fun setAuthenticationDialogStyle(@StyleRes styleRes: Int) {
-        authenticationManager.authenticationDialogStyle = styleRes
-        encryptionManager.authenticationDialogStyle = styleRes
+        setAuthenticationDialogStyle(Style(styleRes))
+    }
+
+    fun setAuthenticationDialogStyle(style: Style) {
+        authenticationManager.authenticationDialogStyle = style
+        encryptionManager.authenticationDialogStyle = style
     }
 
     fun encrypt(messageToEncrypt: String, callback: EncryptionCallback,

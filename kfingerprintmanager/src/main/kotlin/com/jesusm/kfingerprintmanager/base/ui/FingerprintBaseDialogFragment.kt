@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatDialogFragment
 import android.support.v7.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import com.jesusm.kfingerprintmanager.KFingerprintManager
 import com.jesusm.kfingerprintmanager.R
 import com.jesusm.kfingerprintmanager.base.FingerprintAssetsManager
@@ -41,6 +44,7 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
         dialogRootView = layoutInflater.inflate(R.layout.fingerprint_dialog_container, null, false)
         fingerprintContainer = dialogRootView.findViewById(R.id.fingerprint_dialog_content)
         inflateViews(dialogRootView)
+        applyStyleToView(dialogRootView)
 
         val builder = AlertDialog.Builder(context, customDialogStyle)
         builder.setView(dialogRootView)
@@ -55,6 +59,24 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
 
     @CallSuper
     open fun inflateViews(rootView: View) {}
+
+    private fun applyStyleToView(rootView: View) {
+        if (style.style != -1) {
+            customDialogStyle = style.style
+        }
+
+        rootView.apply {
+            val titleView = findViewById<TextView>(R.id.fingerprint_dialog_title)
+            titleView.text = getString(style.titleText)
+            val descriptionView = findViewById<TextView>(R.id.fingerprint_dialog_description)
+            descriptionView.text = getString(style.descriptionText)
+            val checkboxView = findViewById<TextView>(R.id.use_fingerprint_in_future_check)
+            checkboxView.text = getString(style.checkText)
+            val passwordView = findViewById<EditText>(R.id.password)
+            passwordView.hint = getString(style.passwordTextDescription)
+            findViewById<ImageView>(R.id.fingerprint_icon).setImageResource(style.fingerprintIcon)
+        }
+    }
 
     @CallSuper
     open fun onDialogShown() {
@@ -88,7 +110,7 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
     }
 
     override fun close() {
-        dismissAllowingStateLoss()
+        dismiss()
     }
 
     override fun onCancel(dialog: DialogInterface?) {
@@ -109,13 +131,19 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
         callback?.onFingerprintNotAvailable()
     }
 
+    private lateinit var style: Style
+
+    fun applyStyle(style: Style) {
+        this.style = style
+    }
+
     abstract class Builder<D : FingerprintBaseDialogFragment<P>, P : FingerprintBaseDialogPresenter> {
-        private var customStyle: Int = 0
+        private var customStyle: Style = Style()
         private var callback: KFingerprintManager.FingerprintBaseCallback? = null
         private lateinit var fingerPrintHardware: FingerprintHardware
         private lateinit var cryptoObject: FingerprintManagerCompat.CryptoObject
 
-        fun withCustomStyle(customStyle: Int): Builder<*, *> {
+        fun withCustomStyle(customStyle: Style): Builder<*, *> {
             this.customStyle = customStyle
             return this
         }
@@ -144,9 +172,7 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
             val presenter = createPresenter(dialogFragment)
             dialogFragment.presenter = presenter
             presenter.setFingerprintHardware(fingerPrintHardware, cryptoObject)
-            if (customStyle != -1) {
-                dialogFragment.customDialogStyle = customStyle
-            }
+            dialogFragment.applyStyle(customStyle)
 
             addProperties(dialogFragment)
 
