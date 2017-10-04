@@ -54,8 +54,7 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
     }
 
     @CallSuper
-    open fun inflateViews(rootView: View) {
-    }
+    open fun inflateViews(rootView: View) {}
 
     @CallSuper
     open fun onDialogShown() {

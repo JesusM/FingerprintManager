@@ -30,19 +30,19 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
         fun onPasswordInserted(password: String)
     }
 
-    val passwordContainer : View by lazy {
-        dialogRootView.findViewById(R.id.fingerprint_dialog_backup_content)
+    private val passwordContainer : View by lazy {
+        dialogRootView.findViewById<View>(R.id.fingerprint_dialog_backup_content)
     }
-    val password by lazy {
-        dialogRootView.findViewById(R.id.password) as EditText
-    }
-
-    val textInputLayout by lazy {
-        dialogRootView.findViewById(R.id.input_layout_password) as TextInputLayout
+    val password: EditText by lazy {
+        dialogRootView.findViewById<EditText>(R.id.password)
     }
 
-    val useFingerprintFutureCheckBox by lazy {
-        dialogRootView.findViewById(R.id.use_fingerprint_in_future_check) as CheckBox
+    val textInputLayout: TextInputLayout by lazy {
+        dialogRootView.findViewById<TextInputLayout>(R.id.input_layout_password)
+    }
+
+    private val useFingerprintFutureCheckBox by lazy {
+        dialogRootView.findViewById<CheckBox>(R.id.use_fingerprint_in_future_check)
     }
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -50,12 +50,6 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
     }
 
     private var startWithNewFingerprintEnrolled: Boolean = false
-
-    fun onPresenterChanged(new: FingerprintAuthenticationDialogPresenter) {
-        if (startWithNewFingerprintEnrolled) {
-            new.newFingerprintEnrolled()
-        }
-    }
 
     override fun inflateViews(rootView: View) {
         super.inflateViews(rootView)
@@ -96,18 +90,17 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
         dialogBuilder.setPositiveButton(R.string.use_password, null)
     }
 
-    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-        return when (actionId) {
-            EditorInfo.IME_ACTION_GO -> {
-                dismiss()
-                true
+    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean =
+            when (actionId) {
+                EditorInfo.IME_ACTION_GO -> {
+                    dismiss()
+                    true
+                }
+                else -> {
+                    textInputLayout.error = null
+                    false
+                }
             }
-            else -> {
-                textInputLayout.error = null
-                false
-            }
-        }
-    }
 
     override fun onFingerprintDisplayed() {
         fingerprintContainer.visibility = VISIBLE
@@ -177,16 +170,15 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
     }
 
     class Builder : FingerprintBaseDialogFragment.Builder<FingerprintAuthenticationDialogFragment, FingerprintAuthenticationDialogPresenter>() {
-        internal var newFingerprintEnrolled: Boolean = false
+        private var newFingerprintEnrolled: Boolean = false
 
         fun newFingerprintEnrolled(newFingerprintEnrolled: Boolean): Builder {
             this.newFingerprintEnrolled = newFingerprintEnrolled
             return this
         }
 
-        override fun createDialogFragment(): FingerprintAuthenticationDialogFragment {
-            return FingerprintAuthenticationDialogFragment()
-        }
+        override fun createDialogFragment(): FingerprintAuthenticationDialogFragment =
+                FingerprintAuthenticationDialogFragment()
 
         override fun addProperties(dialogFragment: FingerprintAuthenticationDialogFragment) {
             if (newFingerprintEnrolled) {
@@ -194,9 +186,8 @@ class FingerprintAuthenticationDialogFragment : FingerprintBaseDialogFragment<Fi
             }
         }
 
-        override fun createPresenter(view: FingerprintAuthenticationDialogFragment): FingerprintAuthenticationDialogPresenter {
-            return FingerprintAuthenticationDialogPresenter(view)
-        }
+        override fun createPresenter(view: FingerprintAuthenticationDialogFragment): FingerprintAuthenticationDialogPresenter =
+                FingerprintAuthenticationDialogPresenter(view)
     }
 
     private open class TextWatcherAdapter : TextWatcher {
