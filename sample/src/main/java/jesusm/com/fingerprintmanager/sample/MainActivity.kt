@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initClickListeners() {
 
-        findViewById(R.id.buttonDialogThemeLight).setOnClickListener { v ->
+        findViewById<Button>(R.id.buttonDialogThemeLight).setOnClickListener { v ->
             selectView(v)
 
             deselectView(findViewById(R.id.buttonDialogThemeDark))
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             dialogTheme = R.style.DialogThemeLight
         }
 
-        findViewById(R.id.buttonDialogThemeDark).setOnClickListener { v ->
+        findViewById<Button>(R.id.buttonDialogThemeDark).setOnClickListener { v ->
             selectView(v)
 
             deselectView(findViewById(R.id.buttonDialogThemeLight))

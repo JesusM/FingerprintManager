@@ -16,12 +16,10 @@ class FingerprintEncryptionDialogFragment : FingerprintBaseDialogFragment<Finger
 
         }
 
-        override fun createDialogFragment(): FingerprintEncryptionDialogFragment {
-            return FingerprintEncryptionDialogFragment()
-        }
+        override fun createDialogFragment(): FingerprintEncryptionDialogFragment =
+                FingerprintEncryptionDialogFragment()
 
-        override fun createPresenter(view: FingerprintEncryptionDialogFragment): FingerprintEncryptionDialogPresenter {
-            return FingerprintEncryptionDialogPresenter(view)
-        }
+        override fun createPresenter(view: FingerprintEncryptionDialogFragment): FingerprintEncryptionDialogPresenter =
+                FingerprintEncryptionDialogPresenter(view)
     }
 }
