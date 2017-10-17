@@ -88,7 +88,7 @@ abstract class FingerprintBaseDialogFragment<T : FingerprintBaseDialogPresenter>
     }
 
     override fun close() {
-        dismiss()
+        dismissAllowingStateLoss()
     }
 
     override fun onCancel(dialog: DialogInterface?) {

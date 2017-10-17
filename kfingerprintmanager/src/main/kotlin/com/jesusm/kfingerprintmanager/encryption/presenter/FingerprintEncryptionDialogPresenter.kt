@@ -22,9 +22,9 @@ class FingerprintEncryptionDialogPresenter(view : View) : FingerprintBaseDialogP
     override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
         super.onAuthenticationSucceeded(result)
 
+        close()
         result?.let {
             (view as View).onAuthenticationSucceed(it.cryptoObject)
         }
-        close()
     }
 }
