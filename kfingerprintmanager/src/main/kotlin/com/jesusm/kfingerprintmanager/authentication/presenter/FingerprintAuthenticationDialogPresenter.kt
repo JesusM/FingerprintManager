@@ -32,8 +32,8 @@ class FingerprintAuthenticationDialogPresenter(view: View) : FingerprintBaseDial
             }
         }
 
-        (view as View).onPasswordInserted(password)
         close()
+        (view as View).onPasswordInserted(password)
     }
 
     private fun isValidPassword(password: String) : Boolean = password.isNullOrEmpty().not()
@@ -69,8 +69,8 @@ class FingerprintAuthenticationDialogPresenter(view: View) : FingerprintBaseDial
     }
 
     override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult) {
-        (view as View).onAuthenticationSucceed()
         close()
+        (view as View).onAuthenticationSucceed()
     }
 
     interface View : FingerprintBaseDialogPresenter.View {
