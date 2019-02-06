@@ -37,7 +37,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_gravity="center_horizontal"
-        android:text="@string/fingerprint_hint"
         android:gravity="center_horizontal"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="18sp" />
