@@ -7,8 +7,8 @@
 
     <string name="use_fingerprint_in_future">Use fingerprint in the future</string>
     <string name="use_fingerprint_to_authenticate_key" >use_fingerprint_to_authenticate_key</string>
-    <string name="fingerprint_description">Confirm fingerprint to continue</string>
-    <string name="fingerprint_hint">Touch sensor</string>
+    <string name="fingerprint_description">Identifier vous à l\'aide de votre empreinte digitale</string>
+    <string name="fingerprint_hint">Détecteur de l'empreinte</string>
 
     <!-- Error messages -->
     <string name="fingerprint_auth_not_available_msg"><![CDATA[\"Secure lock screen hasn\'t set up.\\n\"                             + \"Go to \'Settings -> Security -> Fingerprint\' to set up a fingerprint\"]]></string>
