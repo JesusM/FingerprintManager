@@ -1,7 +1,5 @@
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-FingerprintManager-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5521)
 
-[![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=5933de925161b7000159e901&branch=master&build=latest)](https://dashboard.buddybuild.com/apps/5933de925161b7000159e901/build/latest?branch=master)
-
 KFingerprintManager
 -------------------
 A small library to handle Android fingerprint APIs.
@@ -15,7 +13,7 @@ A small library to handle Android fingerprint APIs.
  This library can be used to provide basic authentication through fingerprint API, using manual password as backup option. It also allows you to encrypt messages using fingerprint APIs.
  This library provides a sample to show how it can be used.
  
- [![](https://jitpack.io/v/JesusM/FingerprintManager.svg)](https://jitpack.io/#JesusM/FingerprintManager)
+ [![](https://jitpack.io/v/habibKhlifi/FingerprintManager.svg)](https://jitpack.io/#habibKhlifi/FingerprintManager)
 
 ### Basic use:
  You import via gradle from <https://jitpack.io> adding this to your root build.gradle file:
@@ -30,10 +28,11 @@ A small library to handle Android fingerprint APIs.
  and then adding the library as dependency:
  ```gradle
  dependencies {
-   compile 'com.github.JesusM:FingerprintManager:{latest_version}'
+   compile 'com.github.habibKhlifi:FingerprintManager:{latest_version}'
+  
  }
  ```
- (you can see which is the {latest_version} value from [releases tab](https://github.com/JesusM/FingerprintManager/releases))
+ (you can see which is the {latest_version} value from [releases tab](https://github.com/habibKhlifi/FingerprintManager/releases))
  
  Create the fingerprint manager.
  ```java
